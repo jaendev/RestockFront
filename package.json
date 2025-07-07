@@ -48,7 +48,8 @@
     "eslint-config-expo": "~9.2.0",
     "postcss": "^8.5.5",
     "tailwindcss": "^4.1.10",
-    "typescript": "~5.8.3"
+    "typescript": "~5.8.3",
+    "@react-native-community/cli": "latest"
   },
   "private": true
 }
