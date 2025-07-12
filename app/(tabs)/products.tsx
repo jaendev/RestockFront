@@ -3,19 +3,58 @@ import { useProducts } from "@/hooks/useProducts";
 import { useProductSearch } from "@/hooks/useProductSearch";
 import { router } from "expo-router";
 import { Package, Plus } from "lucide-react-native";
+import { DropdownFilter } from "@/components/DropdownFilter";
+import { useState } from "react";
 import {
+  LogBox,
   ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
+import { CreateProductDto } from "@/types/product";
+import { ProductForm } from "@/components/ProductForm";
+import { createProduct } from "@/services/productService";
 
 export default function ProductsScreen() {
-  const { products } = useProducts();
+  const { products, refetch } = useProducts();
   const { searchTerm, setSearchTerm, filteredProducts } = useProductSearch(
     products || [],
   );
+
+  const [showFilter, setShowFilter] = useState<boolean>(false);
+  const [selectedFilter, setSelectedFilter] = useState("all");
+  const [showCreateForm, setShowCreateForm] = useState(false);
+
+  const handleCreateProduct = async (productData: CreateProductDto) => {
+    try {
+      await createProduct(productData);
+      await refetch();
+    } catch (error) {
+      console.error("Error creating product:", error);
+      throw error;
+    }
+  };
+
+  const getFilteredProducts = () => {
+    let filtered = filteredProducts;
+
+    switch (selectedFilter) {
+      case "low_stock":
+        return filtered.filter((product) => product.isLowStock);
+      case "active":
+        return filtered.filter((product) => product.isActive);
+      case "inactive":
+        return filtered.filter((product) => !product.isActive);
+      case "out_of_stock":
+        return filtered.filter((product) => product.isOutOfStock);
+      default:
+        return filtered;
+    }
+  };
+
+  const finalProducts = getFilteredProducts();
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -43,20 +82,37 @@ export default function ProductsScreen() {
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.title}>Productos</Text>
-        <TouchableOpacity style={styles.addButton}>
+        <TouchableOpacity
+          style={styles.addButton}
+          onPress={() => setShowCreateForm(true)}
+        >
           <Plus size={20} color="#FFFFFF" />
         </TouchableOpacity>
       </View>
 
+      <ProductForm
+        visible={showCreateForm}
+        onClose={() => setShowCreateForm(false)}
+        onSubmit={handleCreateProduct}
+      />
+
       <Browser
         searchTerm={searchTerm}
         onSearchChange={setSearchTerm}
+        showFilter={showFilter}
+        onShowFilterChange={setShowFilter}
         placeholder={"Buscar productos..."}
+      />
+
+      <DropdownFilter
+        selectedValue={selectedFilter}
+        onSelect={setSelectedFilter}
+        placeholder="Filtros"
       />
 
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         <View style={styles.productsContainer}>
-          {filteredProducts?.map((product) => (
+          {finalProducts?.map((product) => (
             <TouchableOpacity
               onPress={() => router.push(`/product/${product.id}`)}
               key={product.id}
@@ -105,6 +161,17 @@ export default function ProductsScreen() {
               </View>
             </TouchableOpacity>
           ))}
+
+          {(!finalProducts || finalProducts.length === 0) && (
+            <View style={styles.emptyState}>
+              <Package size={48} color="#9CA3AF" />
+              <Text style={styles.emptyStateTitle}>No hay productos</Text>
+              <Text style={styles.emptyStateText}>
+                No se encontraron productos que coincidan con los filtros
+                aplicados
+              </Text>
+            </View>
+          )}
         </View>
       </ScrollView>
     </View>
@@ -254,5 +321,50 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "700",
     color: "#6B7280",
+  },
+  filtersContainer: {
+    flexDirection: "row",
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    backgroundColor: "#FFFFFF",
+    gap: 12,
+    alignItems: "center",
+  },
+  filterDropdown: {
+    backgroundColor: "#2563EB",
+    borderColor: "#1D4ED8",
+  },
+  emptyState: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 60,
+    paddingHorizontal: 20,
+  },
+  emptyStateTitle: {
+    fontSize: 18,
+    fontWeight: "600",
+    color: "#374151",
+    marginTop: 16,
+    marginBottom: 8,
+    textAlign: "center",
+  },
+  emptyStateText: {
+    fontSize: 14,
+    color: "#9CA3AF",
+    textAlign: "center",
+    lineHeight: 20,
+    marginBottom: 24,
+  },
+  emptyStateButton: {
+    backgroundColor: "#2563EB",
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    borderRadius: 8,
+  },
+  emptyStateButtonText: {
+    color: "#FFFFFF",
+    fontSize: 14,
+    fontWeight: "600",
   },
 });

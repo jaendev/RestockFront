@@ -30,7 +30,7 @@ export interface Product {
   // Computed stock status
   isLowStock: boolean;
   isOutOfStock: boolean;
-  stockStatus: 'Normal Stock' | 'Low Stock' | 'Out of Stock' | 'Critical Stock';
+  stockStatus: "Normal Stock" | "Low Stock" | "Out of Stock" | "Critical Stock";
 
   // Calculated values
   totalValue: number;
@@ -38,17 +38,29 @@ export interface Product {
 }
 
 export interface CantProducts {
-  totalProducts: number,
-  timestamp: Timestamp
+  totalProducts: number;
+  timestamp: Timestamp;
 }
 
-export interface CreateProductRequest {
+export interface CreateProductDto {
   name: string;
+  description?: string;
+  currentStock: number;
+  minimumStock: number;
+  unitId: number;
+  price?: number;
   categoryId: number;
-  quantity: number;
-  minStock: number;
+  imageUrl?: string | null | undefined;
 }
 
-export interface UpdateProductRequest extends Partial<CreateProductRequest> {
+export interface UnitType {
+  id: number;
+  name: string;
+  symbol: string;
+  description?: string;
+  isActive: boolean;
+}
+
+export interface UpdateProductRequest extends Partial<CreateProductDto> {
   id: number;
 }

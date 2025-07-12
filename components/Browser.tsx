@@ -4,13 +4,17 @@ import { TextInput, TouchableOpacity, View, StyleSheet } from "react-native";
 interface BrowserProps {
   searchTerm: string;
   placeholder: string;
+  showFilter: boolean;
   onSearchChange: (term: string) => void;
+  onShowFilterChange: (show: boolean) => void;
 }
 
 export function Browser({
   searchTerm,
   onSearchChange,
+  showFilter,
   placeholder,
+  onShowFilterChange,
 }: BrowserProps) {
   return (
     <View style={styles.searchContainer}>
@@ -24,9 +28,6 @@ export function Browser({
           onChangeText={onSearchChange}
         />
       </View>
-      <TouchableOpacity style={styles.filterButton}>
-        <Filter size={18} color="#6B7280" />
-      </TouchableOpacity>
     </View>
   );
 }

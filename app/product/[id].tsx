@@ -18,7 +18,7 @@ import {
 
 export default function ProductDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const productId = parseInt(id); // Ensure the id is int
+  const productId = parseInt(id);
 
   const { product } = useProducts(productId);
 
