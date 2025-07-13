@@ -1,6 +1,8 @@
 import { ProductForm } from "@/components/ProductForm";
 import { useCategories } from "@/hooks/useCategories";
 import { useProducts } from "@/hooks/useProducts";
+import { createProduct } from "@/services/productService";
+import { CreateProductDto } from "@/types/product";
 import { router, useLocalSearchParams } from "expo-router";
 import {
   AlertTriangle,
@@ -27,7 +29,7 @@ export default function CategoryDetailScreen() {
   const [showCreateForm, setShowCreateForm] = useState(false);
 
   const { categories } = useCategories();
-  const { products } = useProducts();
+  const { products, refetch } = useProducts();
 
   const categoryId = parseInt(id);
   const category = categories?.find((c) => c.id === categoryId);
