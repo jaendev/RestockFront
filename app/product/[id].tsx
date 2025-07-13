@@ -1,4 +1,7 @@
+import { ProductForm } from "@/components/ProductForm";
 import { useProducts } from "@/hooks/useProducts";
+import { updateProduct, updateStock } from "@/services/productService";
+import { UpdateProductDto } from "@/types/product";
 import { router, useLocalSearchParams } from "expo-router";
 import {
   AlertTriangle,
@@ -7,8 +10,10 @@ import {
   Package,
   Plus,
 } from "lucide-react-native";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
+  Alert,
+  LogBox,
   ScrollView,
   StyleSheet,
   Text,
@@ -20,9 +25,49 @@ export default function ProductDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const productId = parseInt(id);
 
-  const { product } = useProducts(productId);
+  const { product, refetch } = useProducts(productId);
 
+  const [showEditForm, setShowEditForm] = useState(false);
   const [quantity, setQuantity] = useState(product?.currentStock || 0);
+
+  useEffect(() => {
+    if (product) {
+      setQuantity(product.currentStock);
+    }
+  }, [product?.currentStock]);
+
+  const turnProucts = () => {
+    router.push("/products");
+  };
+
+  const updateStockProduct = async (newQuantity: number) => {
+    if (newQuantity < 0) return;
+    try {
+      console.log("Updating stock...", newQuantity, productId);
+      setQuantity(newQuantity);
+      await updateStock(productId, newQuantity);
+      await refetch();
+      console.log("Stock updated successfully");
+    } catch (error) {
+      console.error("Error updating stock:", error);
+      setQuantity(product?.currentStock || 0);
+      Alert.alert("Error", "No se pudo actualizar el stock");
+    }
+  };
+
+  const handleUpdateProduct = async (
+    productId: number,
+    productData: UpdateProductDto,
+  ) => {
+    try {
+      await updateProduct(productId, productData);
+      await refetch();
+      console.log("Producto actualizado exitosamente");
+    } catch (error) {
+      console.error("Error updating product:", error);
+      throw error;
+    }
+  };
 
   if (!product) {
     return (
@@ -37,17 +82,6 @@ export default function ProductDetailScreen() {
       </View>
     );
   }
-
-  const turnProucts = () => {
-    router.push("/products");
-  };
-
-  const updateStock = (newQuantity: number) => {
-    if (newQuantity >= 0) {
-      setQuantity(newQuantity);
-      // TODO: Api calls
-    }
-  };
 
   return (
     <View style={styles.container}>
@@ -104,14 +138,14 @@ export default function ProductDetailScreen() {
               <View style={styles.stockControls}>
                 <TouchableOpacity
                   style={styles.stockButton}
-                  onPress={() => updateStock(quantity - 1)}
+                  onPress={() => updateStockProduct(quantity - 1)}
                 >
                   <Minus size={20} color="#6B7280" />
                 </TouchableOpacity>
 
                 <TouchableOpacity
                   style={styles.stockButton}
-                  onPress={() => updateStock(quantity + 1)}
+                  onPress={() => updateStockProduct(quantity + 1)}
                 >
                   <Plus size={20} color="#6B7280" />
                 </TouchableOpacity>
@@ -205,16 +239,29 @@ export default function ProductDetailScreen() {
 
           {/* Action Buttons */}
           <View style={styles.actionSection}>
-            <TouchableOpacity style={styles.primaryButton}>
+            <TouchableOpacity
+              style={styles.primaryButton}
+              onPress={() => updateStockProduct(quantity)}
+            >
               <Text style={styles.primaryButtonText}>Actualizar Stock</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.secondaryButton}>
+            <TouchableOpacity
+              style={styles.secondaryButton}
+              onPress={() => setShowEditForm(true)}
+            >
               <Text style={styles.secondaryButtonText}>Editar Producto</Text>
             </TouchableOpacity>
           </View>
         </View>
       </ScrollView>
+      <ProductForm
+        visible={showEditForm}
+        onClose={() => setShowEditForm(false)}
+        editProduct={product}
+        onUpdate={handleUpdateProduct}
+        onSubmit={() => Promise.resolve()}
+      />
     </View>
   );
 }

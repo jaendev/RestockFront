@@ -20,31 +20,33 @@ import {
   FolderOpen,
   Ruler,
 } from "lucide-react-native";
-import { CreateProductDto } from "@/types/product";
+import { CreateProductDto, Product, UpdateProductDto } from "@/types/product";
 import { useUnitTypes } from "@/hooks/useUnitTypes";
 
 interface ProductFormProps {
   visible: boolean;
   onClose: () => void;
   currentCategoryId?: number;
+  editProduct?: Product | null;
   onSubmit: (product: CreateProductDto) => Promise<void>;
+  onUpdate?: (productId: number, product: UpdateProductDto) => Promise<void>; // ✅ NUEVO: Función de actualización
 }
 
 export function ProductForm({
   visible,
   onClose,
   currentCategoryId,
+  editProduct,
   onSubmit,
+  onUpdate,
 }: ProductFormProps) {
   const { categories } = useCategories();
   const { unitTypes } = useUnitTypes();
 
-  console.log("categorya por prop", currentCategoryId);
+  const isEditMode = !!editProduct;
 
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
-
-  // Selected items for display
   const [selectedCategory, setSelectedCategory] = useState<string>("");
   const [selectedUnit, setSelectedUnit] = useState<string>("");
 
@@ -60,39 +62,67 @@ export function ProductForm({
     imageUrl: null,
   });
 
-  // Reset form when modal opens
   useEffect(() => {
     if (visible) {
-      const firstUnit = unitTypes[0];
+      if (isEditMode && editProduct) {
+        // Modo edición: poblar con datos existentes
+        const targetCategory = categories?.find(
+          (cat) => cat.id === editProduct.categoryId,
+        );
+        const targetUnit = unitTypes?.find(
+          (unit) => unit.id === editProduct.unitId,
+        );
 
-      const targetCategoryId = currentCategoryId || categories?.[0]?.id || 1;
-      const targetCategory = categories?.find(
-        (cat) => cat.id === targetCategoryId,
-      );
+        setFormData({
+          name: editProduct.name,
+          description: editProduct.description || "",
+          currentStock: editProduct.currentStock,
+          minimumStock: editProduct.minimumStock,
+          unitId: editProduct.unitId,
+          price: editProduct.price || 0,
+          categoryId: editProduct.categoryId,
+          imageUrl: editProduct.imageUrl || null,
+        });
 
-      console.log(
-        "Setting category ID:",
-        targetCategoryId,
-        "from prop:",
-        currentCategoryId,
-      );
+        setSelectedCategory(targetCategory?.name || "");
+        setSelectedUnit(`${targetUnit?.name} (${targetUnit?.symbol})` || "");
 
-      setFormData({
-        name: "",
-        description: "",
-        currentStock: 0,
-        minimumStock: 0,
-        unitId: firstUnit?.id || 1,
-        price: 0,
-        categoryId: targetCategoryId,
-        imageUrl: null,
-      });
+        console.log("📝 Modo edición: datos cargados", editProduct);
+      } else {
+        // Modo creación: valores por defecto
+        const firstUnit = unitTypes[0];
+        const targetCategoryId = currentCategoryId || categories?.[0]?.id || 1;
+        const targetCategory = categories?.find(
+          (cat) => cat.id === targetCategoryId,
+        );
 
-      setSelectedCategory(targetCategory?.name || "");
-      setSelectedUnit(`${firstUnit?.name} (${firstUnit?.symbol})` || "");
+        setFormData({
+          name: "",
+          description: "",
+          currentStock: 0,
+          minimumStock: 0,
+          unitId: firstUnit?.id || 1,
+          price: 0,
+          categoryId: targetCategoryId,
+          imageUrl: null,
+        });
+
+        setSelectedCategory(targetCategory?.name || "");
+        setSelectedUnit(`${firstUnit?.name} (${firstUnit?.symbol})` || "");
+
+        console.log("✨ Modo creación: valores por defecto");
+      }
+
       setErrors({});
     }
-  }, [visible, categories, currentCategoryId, unitTypes]);
+  }, [
+    visible,
+    categories,
+    currentCategoryId,
+    unitTypes,
+    editProduct,
+    isEditMode,
+  ]);
 
   const updateField = (
     field: keyof CreateProductDto,
@@ -166,12 +196,24 @@ export function ProductForm({
 
     try {
       setLoading(true);
-      await onSubmit(formData);
+
+      if (isEditMode && onUpdate && editProduct) {
+        // Mode edit
+        await onUpdate(editProduct.id, formData);
+        Alert.alert("Éxito", "Producto actualizado correctamente");
+      } else {
+        // Mode create
+        await onSubmit(formData);
+        Alert.alert("Éxito", "Producto creado correctamente");
+      }
+
       onClose();
-      Alert.alert("Éxito", "Producto creado correctamente");
     } catch (error) {
-      Alert.alert("Error", "No se pudo crear el producto");
-      console.error("Error creating product:", error);
+      const errorMessage = isEditMode
+        ? "No se pudo actualizar el producto"
+        : "No se pudo crear el producto";
+      Alert.alert("Error", errorMessage);
+      console.error("Error:", error);
     } finally {
       setLoading(false);
     }
@@ -193,7 +235,9 @@ export function ProductForm({
           <TouchableOpacity onPress={onClose} style={styles.closeButton}>
             <X size={24} color="#374151" />
           </TouchableOpacity>
-          <Text style={styles.headerTitle}>Nuevo Producto</Text>
+          <Text style={styles.headerTitle}>
+            {isEditMode ? "Editar Producto" : "Nuevo Producto"}
+          </Text>
           <View style={styles.placeholder} />
         </View>
 
@@ -203,7 +247,11 @@ export function ProductForm({
             <View style={styles.productIcon}>
               <Package size={40} color="#2563EB" />
             </View>
-            <Text style={styles.iconText}>Crear nuevo producto</Text>
+            <Text style={styles.iconText}>
+              {isEditMode
+                ? "Editar producto existente"
+                : "Crear nuevo producto"}
+            </Text>
           </View>
 
           {/* Basic Information */}
@@ -537,7 +585,13 @@ export function ProductForm({
             disabled={loading}
           >
             <Text style={styles.submitButtonText}>
-              {loading ? "Creando..." : "Crear Producto"}
+              {loading
+                ? isEditMode
+                  ? "Actualizando..."
+                  : "Creando..."
+                : isEditMode
+                  ? "Actualizar Producto"
+                  : "Crear Producto"}
             </Text>
           </TouchableOpacity>
         </View>

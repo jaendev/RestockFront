@@ -63,4 +63,16 @@ export interface UnitType {
 
 export interface UpdateProductRequest extends Partial<CreateProductDto> {
   id: number;
+  newStock: number;
+}
+
+export interface UpdateProductDto {
+  name?: string;
+  description?: string;
+  currentStock?: number;
+  minimumStock?: number;
+  unitId?: number;
+  price?: number;
+  categoryId?: number;
+  imageUrl?: string | null;
 }

@@ -29,6 +29,11 @@ export function useProducts(productId?: number) {
       setProducts(productsData);
       setCantProducts(cantProductsData);
       setCantLowStockProducts(cantLowStockData);
+
+      if (productId) {
+        const productData = await getProductsById(productId);
+        setProduct(productData);
+      }
     } catch (e: any) {
       setError(e.message);
     } finally {
