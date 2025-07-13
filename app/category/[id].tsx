@@ -1,3 +1,4 @@
+import { ProductForm } from "@/components/ProductForm";
 import { useCategories } from "@/hooks/useCategories";
 import { useProducts } from "@/hooks/useProducts";
 import { router, useLocalSearchParams } from "expo-router";
@@ -23,6 +24,7 @@ export default function CategoryDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
 
   const [showInactiveProducts, setShowInactiveProducts] = useState(false);
+  const [showCreateForm, setShowCreateForm] = useState(false);
 
   const { categories } = useCategories();
   const { products } = useProducts();
@@ -33,6 +35,16 @@ export default function CategoryDetailScreen() {
 
   const turnCategories = () => {
     router.push("/categories");
+  };
+
+  const handleCreateProduct = async (productData: CreateProductDto) => {
+    try {
+      await createProduct(productData);
+      await refetch();
+    } catch (error) {
+      console.error("Error creating product:", error);
+      throw error;
+    }
   };
 
   if (!category) {
@@ -310,9 +322,19 @@ export default function CategoryDetailScreen() {
               <Text style={styles.primaryButtonText}>Editar Categoría</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.secondaryButton}>
+            <TouchableOpacity
+              style={styles.secondaryButton}
+              onPress={() => setShowCreateForm(true)}
+            >
               <Text style={styles.secondaryButtonText}>Agregar Producto</Text>
             </TouchableOpacity>
+
+            <ProductForm
+              visible={showCreateForm}
+              onClose={() => setShowCreateForm(false)}
+              onSubmit={handleCreateProduct}
+              currentCategoryId={categoryId}
+            />
           </View>
         </View>
       </ScrollView>

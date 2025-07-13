@@ -26,12 +26,20 @@ import { useUnitTypes } from "@/hooks/useUnitTypes";
 interface ProductFormProps {
   visible: boolean;
   onClose: () => void;
+  currentCategoryId?: number;
   onSubmit: (product: CreateProductDto) => Promise<void>;
 }
 
-export function ProductForm({ visible, onClose, onSubmit }: ProductFormProps) {
+export function ProductForm({
+  visible,
+  onClose,
+  currentCategoryId,
+  onSubmit,
+}: ProductFormProps) {
   const { categories } = useCategories();
   const { unitTypes } = useUnitTypes();
+
+  console.log("categorya por prop", currentCategoryId);
 
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -48,15 +56,26 @@ export function ProductForm({ visible, onClose, onSubmit }: ProductFormProps) {
     minimumStock: 0,
     unitId: 1,
     price: 0,
-    categoryId: 1,
+    categoryId: currentCategoryId || 1,
     imageUrl: null,
   });
 
   // Reset form when modal opens
   useEffect(() => {
     if (visible) {
-      const firstCategory = categories?.[0];
       const firstUnit = unitTypes[0];
+
+      const targetCategoryId = currentCategoryId || categories?.[0]?.id || 1;
+      const targetCategory = categories?.find(
+        (cat) => cat.id === targetCategoryId,
+      );
+
+      console.log(
+        "Setting category ID:",
+        targetCategoryId,
+        "from prop:",
+        currentCategoryId,
+      );
 
       setFormData({
         name: "",
@@ -65,15 +84,15 @@ export function ProductForm({ visible, onClose, onSubmit }: ProductFormProps) {
         minimumStock: 0,
         unitId: firstUnit?.id || 1,
         price: 0,
-        categoryId: firstCategory?.id || 1,
+        categoryId: targetCategoryId,
         imageUrl: null,
       });
 
-      setSelectedCategory(firstCategory?.name || "");
+      setSelectedCategory(targetCategory?.name || "");
       setSelectedUnit(`${firstUnit?.name} (${firstUnit?.symbol})` || "");
       setErrors({});
     }
-  }, [visible, categories]);
+  }, [visible, categories, currentCategoryId, unitTypes]);
 
   const updateField = (
     field: keyof CreateProductDto,
