@@ -91,8 +91,6 @@ export function ProductForm({
 
         setSelectedCategory(targetCategory?.name || "");
         setSelectedUnit(`${targetUnit?.name} (${targetUnit?.symbol})` || "");
-
-        console.log("📝 Modo edición: datos cargados", editProduct);
       } else {
         // Modo creación: valores por defecto
         const firstUnit = unitTypes[0];
@@ -115,8 +113,6 @@ export function ProductForm({
 
         setSelectedCategory(targetCategory?.name || "");
         setSelectedUnit(`${firstUnit?.name} (${firstUnit?.symbol})` || "");
-
-        console.log("✨ Modo creación: valores por defecto");
       }
 
       setErrors({});
@@ -160,7 +156,6 @@ export function ProductForm({
     updateField("unitId", unitId);
   };
 
-  // Handle toggle product active status (local state only)
   const handleToggleIsActive = () => {
     updateField("isActive", !formData.isActive);
   };
@@ -497,7 +492,9 @@ export function ProductForm({
               <View style={styles.toggleInfo}>
                 <Text style={styles.toggleLabel}>Producto Activo</Text>
                 <Text style={styles.toggleDescription}>
-                  {formData.isActive ? "El producto está disponible en el inventario" : "El producto está deshabilitado"}
+                  {formData.isActive
+                    ? "El producto está disponible en el inventario"
+                    : "El producto está deshabilitado"}
                 </Text>
               </View>
               <Switch
@@ -633,358 +630,359 @@ export function ProductForm({
 }
 
 // Dynamic styles based on theme colors
-const createStyles = (colors: any) => StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingHorizontal: 20,
-    paddingTop: 60,
-    paddingBottom: 16,
-    backgroundColor: colors.surface,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
-  },
-  closeButton: {
-    padding: 8,
-    borderRadius: 8,
-    backgroundColor: colors.borderLight,
-  },
-  headerTitle: {
-    fontSize: 18,
-    fontWeight: "600",
-    color: colors.text,
-  },
-  placeholder: {
-    width: 40,
-  },
-  content: {
-    flex: 1,
-    paddingHorizontal: 20,
-  },
-  iconContainer: {
-    alignItems: "center",
-    paddingVertical: 24,
-  },
-  productIcon: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    backgroundColor: colors.primaryLight,
-    justifyContent: "center",
-    alignItems: "center",
-    marginBottom: 12,
-  },
-  iconText: {
-    fontSize: 14,
-    color: colors.textSecondary,
-    fontWeight: "500",
-  },
-  section: {
-    marginBottom: 32,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: "600",
-    color: colors.text,
-    marginBottom: 16,
-  },
-  fieldContainer: {
-    marginBottom: 20,
-  },
-  fieldLabel: {
-    fontSize: 14,
-    fontWeight: "500",
-    color: colors.textSecondary,
-    marginBottom: 8,
-  },
-  required: {
-    color: colors.error,
-  },
-  input: {
-    backgroundColor: colors.inputBackground,
-    borderRadius: 12,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    fontSize: 16,
-    color: colors.text,
-    borderWidth: 1,
-    borderColor: colors.inputBorder,
-  },
-  inputError: {
-    borderColor: colors.error,
-    backgroundColor: colors.errorLight,
-  },
-  textArea: {
-    height: 80,
-    textAlignVertical: "top",
-  },
-  inputWithIcon: {
-    position: "relative",
-  },
-  inputIcon: {
-    position: "absolute",
-    left: 16,
-    top: 14,
-    zIndex: 1,
-  },
-  inputWithPadding: {
-    paddingLeft: 44,
-  },
-  currencySymbol: {
-    position: "absolute",
-    left: 16,
-    top: 14,
-    fontSize: 16,
-    color: colors.textSecondary,
-    fontWeight: "600",
-    zIndex: 1,
-  },
-  inputWithCurrency: {
-    paddingLeft: 36,
-  },
-  dropdownContainer: {
-    backgroundColor: colors.inputBackground,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: colors.inputBorder,
-    padding: 16,
-  },
-  dropdownButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 12,
-  },
-  dropdownIcon: {
-    marginRight: 8,
-  },
-  dropdownText: {
-    fontSize: 16,
-    color: colors.textSecondary,
-    fontWeight: "500",
-  },
-  categoriesGrid: {
-    flexDirection: "row",
-  },
-  categoryChip: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 20,
-    borderWidth: 2,
-    borderColor: colors.border,
-    backgroundColor: colors.surface,
-    marginRight: 8,
-  },
-  categoryChipSelected: {
-    backgroundColor: colors.primaryLight,
-  },
-  categoryDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    marginRight: 6,
-  },
-  categoryChipText: {
-    fontSize: 14,
-    color: colors.textSecondary,
-    fontWeight: "500",
-  },
-  categoryChipTextSelected: {
-    color: colors.primary,
-    fontWeight: "600",
-  },
-  unitsGrid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 8,
-  },
-  unitChip: {
-    alignItems: "center",
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: colors.border,
-    backgroundColor: colors.surface,
-    minWidth: 70,
-  },
-  unitChipSelected: {
-    borderColor: colors.primary,
-    backgroundColor: colors.primaryLight,
-  },
-  unitSymbol: {
-    fontSize: 16,
-    fontWeight: "700",
-    color: colors.textSecondary,
-    marginBottom: 2,
-  },
-  unitSymbolSelected: {
-    color: colors.primary,
-  },
-  unitName: {
-    fontSize: 11,
-    color: colors.textSecondary,
-    fontWeight: "500",
-    textAlign: "center",
-  },
-  unitNameSelected: {
-    color: colors.primary,
-  },
-  rowContainer: {
-    flexDirection: "row",
-    gap: 16,
-  },
-  halfField: {
-    flex: 1,
-  },
-  stockInfo: {
-    backgroundColor: colors.primaryLight,
-    borderRadius: 8,
-    padding: 12,
-    marginTop: 8,
-  },
-  stockInfoText: {
-    fontSize: 13,
-    color: colors.primaryDark,
-    lineHeight: 18,
-  },
-  toggleContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    backgroundColor: colors.surface,
-    borderRadius: 12,
-    padding: 16,
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
-  toggleInfo: {
-    flex: 1,
-    marginRight: 16,
-  },
-  toggleLabel: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: colors.text,
-    marginBottom: 4,
-  },
-  toggleDescription: {
-    fontSize: 14,
-    color: colors.textSecondary,
-    lineHeight: 20,
-  },
-  previewSection: {
-    marginBottom: 32,
-  },
-  previewCard: {
-    backgroundColor: colors.surface,
-    borderRadius: 12,
-    padding: 16,
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
-  previewHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 12,
-  },
-  previewIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: colors.primaryLight,
-    justifyContent: "center",
-    alignItems: "center",
-    marginRight: 12,
-  },
-  previewInfo: {
-    flex: 1,
-  },
-  previewName: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: colors.text,
-    marginBottom: 2,
-  },
-  previewCategory: {
-    fontSize: 12,
-    color: colors.textSecondary,
-  },
-  previewPrice: {
-    alignItems: "flex-end",
-  },
-  previewPriceText: {
-    fontSize: 16,
-    fontWeight: "700",
-    color: colors.text,
-  },
-  previewDetails: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    paddingTop: 12,
-    borderTopWidth: 1,
-    borderTopColor: colors.borderLight,
-  },
-  previewDetailItem: {
-    alignItems: "center",
-  },
-  previewDetailLabel: {
-    fontSize: 12,
-    color: colors.textSecondary,
-    marginBottom: 4,
-  },
-  previewDetailValue: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: colors.text,
-  },
-  errorText: {
-    fontSize: 12,
-    color: colors.error,
-    marginTop: 4,
-  },
-  footer: {
-    flexDirection: "row",
-    paddingHorizontal: 20,
-    paddingVertical: 16,
-    backgroundColor: colors.surface,
-    borderTopWidth: 1,
-    borderTopColor: colors.border,
-    gap: 12,
-  },
-  cancelButton: {
-    flex: 1,
-    backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.border,
-    paddingVertical: 16,
-    borderRadius: 12,
-    alignItems: "center",
-  },
-  cancelButtonText: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: colors.textSecondary,
-  },
-  submitButton: {
-    flex: 1,
-    backgroundColor: colors.primary,
-    paddingVertical: 16,
-    borderRadius: 12,
-    alignItems: "center",
-  },
-  submitButtonDisabled: {
-    backgroundColor: colors.textMuted,
-  },
-  submitButtonText: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: colors.surface,
-  },
-});
+const createStyles = (colors: any) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: colors.background,
+    },
+    header: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      paddingHorizontal: 20,
+      paddingTop: 60,
+      paddingBottom: 16,
+      backgroundColor: colors.surface,
+      borderBottomWidth: 1,
+      borderBottomColor: colors.border,
+    },
+    closeButton: {
+      padding: 8,
+      borderRadius: 8,
+      backgroundColor: colors.borderLight,
+    },
+    headerTitle: {
+      fontSize: 18,
+      fontWeight: "600",
+      color: colors.text,
+    },
+    placeholder: {
+      width: 40,
+    },
+    content: {
+      flex: 1,
+      paddingHorizontal: 20,
+    },
+    iconContainer: {
+      alignItems: "center",
+      paddingVertical: 24,
+    },
+    productIcon: {
+      width: 80,
+      height: 80,
+      borderRadius: 40,
+      backgroundColor: colors.primaryLight,
+      justifyContent: "center",
+      alignItems: "center",
+      marginBottom: 12,
+    },
+    iconText: {
+      fontSize: 14,
+      color: colors.textSecondary,
+      fontWeight: "500",
+    },
+    section: {
+      marginBottom: 32,
+    },
+    sectionTitle: {
+      fontSize: 18,
+      fontWeight: "600",
+      color: colors.text,
+      marginBottom: 16,
+    },
+    fieldContainer: {
+      marginBottom: 20,
+    },
+    fieldLabel: {
+      fontSize: 14,
+      fontWeight: "500",
+      color: colors.textSecondary,
+      marginBottom: 8,
+    },
+    required: {
+      color: colors.error,
+    },
+    input: {
+      backgroundColor: colors.inputBackground,
+      borderRadius: 12,
+      paddingHorizontal: 16,
+      paddingVertical: 12,
+      fontSize: 16,
+      color: colors.text,
+      borderWidth: 1,
+      borderColor: colors.inputBorder,
+    },
+    inputError: {
+      borderColor: colors.error,
+      backgroundColor: colors.errorLight,
+    },
+    textArea: {
+      height: 80,
+      textAlignVertical: "top",
+    },
+    inputWithIcon: {
+      position: "relative",
+    },
+    inputIcon: {
+      position: "absolute",
+      left: 16,
+      top: 14,
+      zIndex: 1,
+    },
+    inputWithPadding: {
+      paddingLeft: 44,
+    },
+    currencySymbol: {
+      position: "absolute",
+      left: 16,
+      top: 14,
+      fontSize: 16,
+      color: colors.textSecondary,
+      fontWeight: "600",
+      zIndex: 1,
+    },
+    inputWithCurrency: {
+      paddingLeft: 36,
+    },
+    dropdownContainer: {
+      backgroundColor: colors.inputBackground,
+      borderRadius: 12,
+      borderWidth: 1,
+      borderColor: colors.inputBorder,
+      padding: 16,
+    },
+    dropdownButton: {
+      flexDirection: "row",
+      alignItems: "center",
+      marginBottom: 12,
+    },
+    dropdownIcon: {
+      marginRight: 8,
+    },
+    dropdownText: {
+      fontSize: 16,
+      color: colors.textSecondary,
+      fontWeight: "500",
+    },
+    categoriesGrid: {
+      flexDirection: "row",
+    },
+    categoryChip: {
+      flexDirection: "row",
+      alignItems: "center",
+      paddingHorizontal: 12,
+      paddingVertical: 8,
+      borderRadius: 20,
+      borderWidth: 2,
+      borderColor: colors.border,
+      backgroundColor: colors.surface,
+      marginRight: 8,
+    },
+    categoryChipSelected: {
+      backgroundColor: colors.primaryLight,
+    },
+    categoryDot: {
+      width: 8,
+      height: 8,
+      borderRadius: 4,
+      marginRight: 6,
+    },
+    categoryChipText: {
+      fontSize: 14,
+      color: colors.textSecondary,
+      fontWeight: "500",
+    },
+    categoryChipTextSelected: {
+      color: colors.primary,
+      fontWeight: "600",
+    },
+    unitsGrid: {
+      flexDirection: "row",
+      flexWrap: "wrap",
+      gap: 8,
+    },
+    unitChip: {
+      alignItems: "center",
+      paddingHorizontal: 12,
+      paddingVertical: 10,
+      borderRadius: 12,
+      borderWidth: 1,
+      borderColor: colors.border,
+      backgroundColor: colors.surface,
+      minWidth: 70,
+    },
+    unitChipSelected: {
+      borderColor: colors.primary,
+      backgroundColor: colors.primaryLight,
+    },
+    unitSymbol: {
+      fontSize: 16,
+      fontWeight: "700",
+      color: colors.textSecondary,
+      marginBottom: 2,
+    },
+    unitSymbolSelected: {
+      color: colors.primary,
+    },
+    unitName: {
+      fontSize: 11,
+      color: colors.textSecondary,
+      fontWeight: "500",
+      textAlign: "center",
+    },
+    unitNameSelected: {
+      color: colors.primary,
+    },
+    rowContainer: {
+      flexDirection: "row",
+      gap: 16,
+    },
+    halfField: {
+      flex: 1,
+    },
+    stockInfo: {
+      backgroundColor: colors.primaryLight,
+      borderRadius: 8,
+      padding: 12,
+      marginTop: 8,
+    },
+    stockInfoText: {
+      fontSize: 13,
+      color: colors.primaryDark,
+      lineHeight: 18,
+    },
+    toggleContainer: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      backgroundColor: colors.surface,
+      borderRadius: 12,
+      padding: 16,
+      borderWidth: 1,
+      borderColor: colors.border,
+    },
+    toggleInfo: {
+      flex: 1,
+      marginRight: 16,
+    },
+    toggleLabel: {
+      fontSize: 16,
+      fontWeight: "600",
+      color: colors.text,
+      marginBottom: 4,
+    },
+    toggleDescription: {
+      fontSize: 14,
+      color: colors.textSecondary,
+      lineHeight: 20,
+    },
+    previewSection: {
+      marginBottom: 32,
+    },
+    previewCard: {
+      backgroundColor: colors.surface,
+      borderRadius: 12,
+      padding: 16,
+      borderWidth: 1,
+      borderColor: colors.border,
+    },
+    previewHeader: {
+      flexDirection: "row",
+      alignItems: "center",
+      marginBottom: 12,
+    },
+    previewIcon: {
+      width: 40,
+      height: 40,
+      borderRadius: 20,
+      backgroundColor: colors.primaryLight,
+      justifyContent: "center",
+      alignItems: "center",
+      marginRight: 12,
+    },
+    previewInfo: {
+      flex: 1,
+    },
+    previewName: {
+      fontSize: 16,
+      fontWeight: "600",
+      color: colors.text,
+      marginBottom: 2,
+    },
+    previewCategory: {
+      fontSize: 12,
+      color: colors.textSecondary,
+    },
+    previewPrice: {
+      alignItems: "flex-end",
+    },
+    previewPriceText: {
+      fontSize: 16,
+      fontWeight: "700",
+      color: colors.text,
+    },
+    previewDetails: {
+      flexDirection: "row",
+      justifyContent: "space-around",
+      paddingTop: 12,
+      borderTopWidth: 1,
+      borderTopColor: colors.borderLight,
+    },
+    previewDetailItem: {
+      alignItems: "center",
+    },
+    previewDetailLabel: {
+      fontSize: 12,
+      color: colors.textSecondary,
+      marginBottom: 4,
+    },
+    previewDetailValue: {
+      fontSize: 16,
+      fontWeight: "600",
+      color: colors.text,
+    },
+    errorText: {
+      fontSize: 12,
+      color: colors.error,
+      marginTop: 4,
+    },
+    footer: {
+      flexDirection: "row",
+      paddingHorizontal: 20,
+      paddingVertical: 16,
+      backgroundColor: colors.surface,
+      borderTopWidth: 1,
+      borderTopColor: colors.border,
+      gap: 12,
+    },
+    cancelButton: {
+      flex: 1,
+      backgroundColor: colors.surface,
+      borderWidth: 1,
+      borderColor: colors.border,
+      paddingVertical: 16,
+      borderRadius: 12,
+      alignItems: "center",
+    },
+    cancelButtonText: {
+      fontSize: 16,
+      fontWeight: "600",
+      color: colors.textSecondary,
+    },
+    submitButton: {
+      flex: 1,
+      backgroundColor: colors.primary,
+      paddingVertical: 16,
+      borderRadius: 12,
+      alignItems: "center",
+    },
+    submitButtonDisabled: {
+      backgroundColor: colors.textMuted,
+    },
+    submitButtonText: {
+      fontSize: 16,
+      fontWeight: "600",
+      color: colors.surface,
+    },
+  });

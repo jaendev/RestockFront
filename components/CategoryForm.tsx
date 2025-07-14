@@ -11,12 +11,12 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from "react-native";
+import { X, FolderOpen, Palette } from "lucide-react-native";
 import {
-  X,
-  FolderOpen,
-  Palette,
-} from "lucide-react-native";
-import { Category, CreateCategoryRequest, UpdateCategoryDto } from "@/types/category";
+  Category,
+  CreateCategoryRequest,
+  UpdateCategoryDto,
+} from "@/types/category";
 import { useThemeColors } from "@/context/ThemeContext";
 
 interface CategoryFormProps {
@@ -57,7 +57,9 @@ export function CategoryForm({
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   // Form state
-  const [formData, setFormData] = useState<CreateCategoryRequest & { description?: string }>({
+  const [formData, setFormData] = useState<
+    CreateCategoryRequest & { description?: string }
+  >({
     name: "",
     description: "",
     color: COLOR_PALETTE[0],
@@ -72,8 +74,6 @@ export function CategoryForm({
           description: editCategory.description || "",
           color: editCategory.color,
         });
-
-        console.log("📝 Edit mode: data loaded", editCategory);
       } else {
         // Create mode: default values
         setFormData({
@@ -134,16 +134,13 @@ export function CategoryForm({
       setLoading(true);
 
       if (isEditMode && onUpdate && editCategory) {
-        // Edit mode - backend expects all required fields
         const updateData: UpdateCategoryDto = {
           name: formData.name,
           description: formData.description || undefined,
           color: formData.color,
           isActive: editCategory.isActive, // Keep current active state
         };
-        console.log("🔄 Updating category with data:", updateData);
         await onUpdate(editCategory.id, updateData);
-        console.log("✅ Category updated successfully");
         Alert.alert("Éxito", "Categoría actualizada correctamente");
       } else {
         // Create mode
@@ -194,7 +191,12 @@ export function CategoryForm({
         <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
           {/* Category Icon */}
           <View style={styles.iconContainer}>
-            <View style={[styles.categoryIcon, { backgroundColor: formData.color + "20" }]}>
+            <View
+              style={[
+                styles.categoryIcon,
+                { backgroundColor: formData.color + "20" },
+              ]}
+            >
               <FolderOpen size={40} color={formData.color} />
             </View>
             <Text style={styles.iconText}>
@@ -243,7 +245,7 @@ export function CategoryForm({
           {/* Color Selection */}
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Color de Identificación</Text>
-            
+
             <View style={styles.fieldContainer}>
               <Text style={styles.fieldLabel}>
                 Selecciona un color <Text style={styles.required}>*</Text>
@@ -255,10 +257,17 @@ export function CategoryForm({
                     color="#6B7280"
                     style={styles.paletteIcon}
                   />
-                  <View style={[styles.colorPreview, { backgroundColor: formData.color }]} />
-                  <Text style={styles.selectedColorText}>Color seleccionado</Text>
+                  <View
+                    style={[
+                      styles.colorPreview,
+                      { backgroundColor: formData.color },
+                    ]}
+                  />
+                  <Text style={styles.selectedColorText}>
+                    Color seleccionado
+                  </Text>
                 </TouchableOpacity>
-                
+
                 <View style={styles.colorGrid}>
                   {COLOR_PALETTE.map((color, index) => (
                     <TouchableOpacity
@@ -291,7 +300,12 @@ export function CategoryForm({
               <Text style={styles.sectionTitle}>Vista Previa</Text>
               <View style={styles.previewCard}>
                 <View style={styles.previewHeader}>
-                  <View style={[styles.previewIcon, { backgroundColor: formData.color + "20" }]}>
+                  <View
+                    style={[
+                      styles.previewIcon,
+                      { backgroundColor: formData.color + "20" },
+                    ]}
+                  >
                     <FolderOpen size={24} color={formData.color} />
                   </View>
                   <View style={styles.previewInfo}>
@@ -300,25 +314,36 @@ export function CategoryForm({
                       {formData.description || "Sin descripción"}
                     </Text>
                   </View>
-                  <View style={[styles.previewColorDot, { backgroundColor: formData.color }]} />
+                  <View
+                    style={[
+                      styles.previewColorDot,
+                      { backgroundColor: formData.color },
+                    ]}
+                  />
                 </View>
                 <View style={styles.previewStats}>
                   <View style={styles.previewStatItem}>
                     <Text style={styles.previewStatLabel}>Productos</Text>
                     <Text style={styles.previewStatValue}>
-                      {isEditMode && editCategory ? editCategory.totalProducts : "0"}
+                      {isEditMode && editCategory
+                        ? editCategory.totalProducts
+                        : "0"}
                     </Text>
                   </View>
                   <View style={styles.previewStatItem}>
                     <Text style={styles.previewStatLabel}>Activos</Text>
                     <Text style={styles.previewStatValue}>
-                      {isEditMode && editCategory ? editCategory.activeProducts : "0"}
+                      {isEditMode && editCategory
+                        ? editCategory.activeProducts
+                        : "0"}
                     </Text>
                   </View>
                   <View style={styles.previewStatItem}>
                     <Text style={styles.previewStatLabel}>Bajo Stock</Text>
                     <Text style={styles.previewStatValue}>
-                      {isEditMode && editCategory ? editCategory.lowStockProducts : "0"}
+                      {isEditMode && editCategory
+                        ? editCategory.lowStockProducts
+                        : "0"}
                     </Text>
                   </View>
                 </View>
@@ -362,274 +387,275 @@ export function CategoryForm({
 }
 
 // Dynamic styles based on theme colors
-const createStyles = (colors: any) => StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingHorizontal: 20,
-    paddingTop: 60,
-    paddingBottom: 16,
-    backgroundColor: colors.surface,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
-  },
-  closeButton: {
-    padding: 8,
-    borderRadius: 8,
-    backgroundColor: colors.borderLight,
-  },
-  headerTitle: {
-    fontSize: 18,
-    fontWeight: "600",
-    color: colors.text,
-  },
-  placeholder: {
-    width: 40,
-  },
-  content: {
-    flex: 1,
-    paddingHorizontal: 20,
-  },
-  iconContainer: {
-    alignItems: "center",
-    paddingVertical: 24,
-  },
-  categoryIcon: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    justifyContent: "center",
-    alignItems: "center",
-    marginBottom: 12,
-  },
-  iconText: {
-    fontSize: 14,
-    color: colors.textSecondary,
-    fontWeight: "500",
-  },
-  section: {
-    marginBottom: 32,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: "600",
-    color: colors.text,
-    marginBottom: 16,
-  },
-  fieldContainer: {
-    marginBottom: 20,
-  },
-  fieldLabel: {
-    fontSize: 14,
-    fontWeight: "500",
-    color: colors.textSecondary,
-    marginBottom: 8,
-  },
-  required: {
-    color: colors.error,
-  },
-  input: {
-    backgroundColor: colors.inputBackground,
-    borderRadius: 12,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    fontSize: 16,
-    color: colors.text,
-    borderWidth: 1,
-    borderColor: colors.inputBorder,
-  },
-  inputError: {
-    borderColor: colors.error,
-    backgroundColor: colors.errorLight,
-  },
-  textArea: {
-    height: 80,
-    textAlignVertical: "top",
-  },
-  colorPaletteContainer: {
-    backgroundColor: colors.inputBackground,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: colors.inputBorder,
-    padding: 16,
-  },
-  selectedColorDisplay: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 16,
-    paddingBottom: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.borderLight,
-  },
-  paletteIcon: {
-    marginRight: 8,
-  },
-  colorPreview: {
-    width: 20,
-    height: 20,
-    borderRadius: 10,
-    marginRight: 8,
-    borderWidth: 2,
-    borderColor: colors.surface,
-    shadowColor: colors.shadow,
-    shadowOpacity: 0.1,
-    shadowOffset: { width: 0, height: 1 },
-    shadowRadius: 2,
-    elevation: 2,
-  },
-  selectedColorText: {
-    fontSize: 14,
-    color: colors.textSecondary,
-    fontWeight: "500",
-  },
-  colorGrid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 12,
-  },
-  colorOption: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    justifyContent: "center",
-    alignItems: "center",
-    shadowColor: colors.shadow,
-    shadowOpacity: 0.1,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  colorOptionSelected: {
-    borderWidth: 3,
-    borderColor: colors.surface,
-    shadowOpacity: 0.2,
-    shadowRadius: 6,
-    elevation: 5,
-  },
-  colorCheckmark: {
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  checkmarkText: {
-    color: colors.surface,
-    fontSize: 16,
-    fontWeight: "bold",
-    textShadowColor: "rgba(0,0,0,0.3)",
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 2,
-  },
-  previewSection: {
-    marginBottom: 32,
-  },
-  previewCard: {
-    backgroundColor: colors.surface,
-    borderRadius: 12,
-    padding: 16,
-    borderWidth: 1,
-    borderColor: colors.border,
-    shadowColor: colors.shadow,
-    shadowOpacity: 0.05,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 8,
-    elevation: 2,
-  },
-  previewHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 16,
-  },
-  previewIcon: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    justifyContent: "center",
-    alignItems: "center",
-    marginRight: 12,
-  },
-  previewInfo: {
-    flex: 1,
-  },
-  previewName: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: colors.text,
-    marginBottom: 2,
-  },
-  previewDescription: {
-    fontSize: 12,
-    color: colors.textSecondary,
-  },
-  previewColorDot: {
-    width: 16,
-    height: 16,
-    borderRadius: 8,
-  },
-  previewStats: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    paddingTop: 16,
-    borderTopWidth: 1,
-    borderTopColor: colors.borderLight,
-  },
-  previewStatItem: {
-    alignItems: "center",
-  },
-  previewStatLabel: {
-    fontSize: 12,
-    color: colors.textSecondary,
-    marginBottom: 4,
-  },
-  previewStatValue: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: colors.text,
-  },
-  errorText: {
-    fontSize: 12,
-    color: colors.error,
-    marginTop: 4,
-  },
-  footer: {
-    flexDirection: "row",
-    paddingHorizontal: 20,
-    paddingVertical: 16,
-    backgroundColor: colors.surface,
-    borderTopWidth: 1,
-    borderTopColor: colors.border,
-    gap: 12,
-  },
-  cancelButton: {
-    flex: 1,
-    backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.border,
-    paddingVertical: 16,
-    borderRadius: 12,
-    alignItems: "center",
-  },
-  cancelButtonText: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: colors.textSecondary,
-  },
-  submitButton: {
-    flex: 1,
-    backgroundColor: colors.primary,
-    paddingVertical: 16,
-    borderRadius: 12,
-    alignItems: "center",
-  },
-  submitButtonDisabled: {
-    backgroundColor: colors.textMuted,
-  },
-  submitButtonText: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: colors.surface,
-  },
-});
+const createStyles = (colors: any) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: colors.background,
+    },
+    header: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      paddingHorizontal: 20,
+      paddingTop: 60,
+      paddingBottom: 16,
+      backgroundColor: colors.surface,
+      borderBottomWidth: 1,
+      borderBottomColor: colors.border,
+    },
+    closeButton: {
+      padding: 8,
+      borderRadius: 8,
+      backgroundColor: colors.borderLight,
+    },
+    headerTitle: {
+      fontSize: 18,
+      fontWeight: "600",
+      color: colors.text,
+    },
+    placeholder: {
+      width: 40,
+    },
+    content: {
+      flex: 1,
+      paddingHorizontal: 20,
+    },
+    iconContainer: {
+      alignItems: "center",
+      paddingVertical: 24,
+    },
+    categoryIcon: {
+      width: 80,
+      height: 80,
+      borderRadius: 40,
+      justifyContent: "center",
+      alignItems: "center",
+      marginBottom: 12,
+    },
+    iconText: {
+      fontSize: 14,
+      color: colors.textSecondary,
+      fontWeight: "500",
+    },
+    section: {
+      marginBottom: 32,
+    },
+    sectionTitle: {
+      fontSize: 18,
+      fontWeight: "600",
+      color: colors.text,
+      marginBottom: 16,
+    },
+    fieldContainer: {
+      marginBottom: 20,
+    },
+    fieldLabel: {
+      fontSize: 14,
+      fontWeight: "500",
+      color: colors.textSecondary,
+      marginBottom: 8,
+    },
+    required: {
+      color: colors.error,
+    },
+    input: {
+      backgroundColor: colors.inputBackground,
+      borderRadius: 12,
+      paddingHorizontal: 16,
+      paddingVertical: 12,
+      fontSize: 16,
+      color: colors.text,
+      borderWidth: 1,
+      borderColor: colors.inputBorder,
+    },
+    inputError: {
+      borderColor: colors.error,
+      backgroundColor: colors.errorLight,
+    },
+    textArea: {
+      height: 80,
+      textAlignVertical: "top",
+    },
+    colorPaletteContainer: {
+      backgroundColor: colors.inputBackground,
+      borderRadius: 12,
+      borderWidth: 1,
+      borderColor: colors.inputBorder,
+      padding: 16,
+    },
+    selectedColorDisplay: {
+      flexDirection: "row",
+      alignItems: "center",
+      marginBottom: 16,
+      paddingBottom: 12,
+      borderBottomWidth: 1,
+      borderBottomColor: colors.borderLight,
+    },
+    paletteIcon: {
+      marginRight: 8,
+    },
+    colorPreview: {
+      width: 20,
+      height: 20,
+      borderRadius: 10,
+      marginRight: 8,
+      borderWidth: 2,
+      borderColor: colors.surface,
+      shadowColor: colors.shadow,
+      shadowOpacity: 0.1,
+      shadowOffset: { width: 0, height: 1 },
+      shadowRadius: 2,
+      elevation: 2,
+    },
+    selectedColorText: {
+      fontSize: 14,
+      color: colors.textSecondary,
+      fontWeight: "500",
+    },
+    colorGrid: {
+      flexDirection: "row",
+      flexWrap: "wrap",
+      gap: 12,
+    },
+    colorOption: {
+      width: 44,
+      height: 44,
+      borderRadius: 22,
+      justifyContent: "center",
+      alignItems: "center",
+      shadowColor: colors.shadow,
+      shadowOpacity: 0.1,
+      shadowOffset: { width: 0, height: 2 },
+      shadowRadius: 4,
+      elevation: 3,
+    },
+    colorOptionSelected: {
+      borderWidth: 3,
+      borderColor: colors.surface,
+      shadowOpacity: 0.2,
+      shadowRadius: 6,
+      elevation: 5,
+    },
+    colorCheckmark: {
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    checkmarkText: {
+      color: colors.surface,
+      fontSize: 16,
+      fontWeight: "bold",
+      textShadowColor: "rgba(0,0,0,0.3)",
+      textShadowOffset: { width: 0, height: 1 },
+      textShadowRadius: 2,
+    },
+    previewSection: {
+      marginBottom: 32,
+    },
+    previewCard: {
+      backgroundColor: colors.surface,
+      borderRadius: 12,
+      padding: 16,
+      borderWidth: 1,
+      borderColor: colors.border,
+      shadowColor: colors.shadow,
+      shadowOpacity: 0.05,
+      shadowOffset: { width: 0, height: 2 },
+      shadowRadius: 8,
+      elevation: 2,
+    },
+    previewHeader: {
+      flexDirection: "row",
+      alignItems: "center",
+      marginBottom: 16,
+    },
+    previewIcon: {
+      width: 48,
+      height: 48,
+      borderRadius: 24,
+      justifyContent: "center",
+      alignItems: "center",
+      marginRight: 12,
+    },
+    previewInfo: {
+      flex: 1,
+    },
+    previewName: {
+      fontSize: 16,
+      fontWeight: "600",
+      color: colors.text,
+      marginBottom: 2,
+    },
+    previewDescription: {
+      fontSize: 12,
+      color: colors.textSecondary,
+    },
+    previewColorDot: {
+      width: 16,
+      height: 16,
+      borderRadius: 8,
+    },
+    previewStats: {
+      flexDirection: "row",
+      justifyContent: "space-around",
+      paddingTop: 16,
+      borderTopWidth: 1,
+      borderTopColor: colors.borderLight,
+    },
+    previewStatItem: {
+      alignItems: "center",
+    },
+    previewStatLabel: {
+      fontSize: 12,
+      color: colors.textSecondary,
+      marginBottom: 4,
+    },
+    previewStatValue: {
+      fontSize: 16,
+      fontWeight: "600",
+      color: colors.text,
+    },
+    errorText: {
+      fontSize: 12,
+      color: colors.error,
+      marginTop: 4,
+    },
+    footer: {
+      flexDirection: "row",
+      paddingHorizontal: 20,
+      paddingVertical: 16,
+      backgroundColor: colors.surface,
+      borderTopWidth: 1,
+      borderTopColor: colors.border,
+      gap: 12,
+    },
+    cancelButton: {
+      flex: 1,
+      backgroundColor: colors.surface,
+      borderWidth: 1,
+      borderColor: colors.border,
+      paddingVertical: 16,
+      borderRadius: 12,
+      alignItems: "center",
+    },
+    cancelButtonText: {
+      fontSize: 16,
+      fontWeight: "600",
+      color: colors.textSecondary,
+    },
+    submitButton: {
+      flex: 1,
+      backgroundColor: colors.primary,
+      paddingVertical: 16,
+      borderRadius: 12,
+      alignItems: "center",
+    },
+    submitButtonDisabled: {
+      backgroundColor: colors.textMuted,
+    },
+    submitButtonText: {
+      fontSize: 16,
+      fontWeight: "600",
+      color: colors.surface,
+    },
+  });

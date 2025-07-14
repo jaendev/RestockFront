@@ -12,12 +12,16 @@ import {
 } from "react-native";
 import { CategoryForm } from "@/components/CategoryForm";
 import { createCategory, updateCategory } from "@/services/categoryService";
-import { Category, CreateCategoryRequest, UpdateCategoryDto } from "@/types/category";
+import {
+  Category,
+  CreateCategoryRequest,
+  UpdateCategoryDto,
+} from "@/types/category";
 
 export default function CategoriesScreen() {
   const colors = useThemeColors();
   const { categories, refetch } = useCategories();
-  
+
   // Form state management
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
@@ -34,22 +38,21 @@ export default function CategoriesScreen() {
   };
 
   // Handle update category
-  const handleUpdateCategory = async (categoryId: number, categoryData: UpdateCategoryDto) => {
+  const handleUpdateCategory = async (
+    categoryId: number,
+    categoryData: UpdateCategoryDto,
+  ) => {
     try {
-      console.log("🔄 Updating category ID:", categoryId, "with data:", categoryData);
       await updateCategory(categoryId, categoryData);
-      console.log("✅ Category updated in service, refreshing list...");
-      await refetch(); // Refresh categories list
-      console.log("✅ Categories list refreshed");
+      await refetch();
     } catch (error) {
-      console.error("❌ Error updating category:", error);
+      console.error("Error updating category:", error);
       throw error;
     }
   };
 
   // Handle edit category
   const handleEditCategory = (category: Category) => {
-    console.log("📝 Edit category clicked:", category.name, category);
     setEditingCategory(category);
   };
 
@@ -65,7 +68,7 @@ export default function CategoriesScreen() {
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.title}>Categorias</Text>
-        <TouchableOpacity 
+        <TouchableOpacity
           style={styles.addButton}
           onPress={() => setShowCreateForm(true)}
         >
@@ -121,7 +124,7 @@ export default function CategoriesScreen() {
                   </Text>
                 </View>
               </TouchableOpacity>
-              
+
               <View style={styles.categoryActions}>
                 <TouchableOpacity
                   style={styles.editButton}
@@ -140,7 +143,7 @@ export default function CategoriesScreen() {
           ))}
         </View>
 
-        <TouchableOpacity 
+        <TouchableOpacity
           style={styles.createCategoryButton}
           onPress={() => setShowCreateForm(true)}
         >
@@ -153,140 +156,141 @@ export default function CategoriesScreen() {
 }
 
 // Dynamic styles based on theme colors
-const createStyles = (colors: any) => StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingHorizontal: 16,
-    paddingTop: 60,
-    paddingBottom: 16,
-    backgroundColor: colors.surface,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: "700",
-    color: colors.text,
-  },
-  addButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: colors.primary,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  content: {
-    flex: 1,
-    paddingHorizontal: 16,
-  },
-  statsContainer: {
-    flexDirection: "row",
-    marginTop: 20,
-    marginBottom: 24,
-    gap: 12,
-  },
-  statsCard: {
-    flex: 1,
-    backgroundColor: colors.surface,
-    borderRadius: 12,
-    padding: 20,
-    alignItems: "center",
-    shadowColor: colors.shadow,
-    shadowOpacity: 0.05,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 8,
-    elevation: 2,
-  },
-  statsNumber: {
-    fontSize: 28,
-    fontWeight: "700",
-    color: colors.text,
-    marginBottom: 4,
-  },
-  statsLabel: {
-    fontSize: 14,
-    color: colors.textSecondary,
-    textAlign: "center",
-  },
-  categoriesContainer: {
-    marginBottom: 24,
-  },
-  categoryCard: {
-    backgroundColor: colors.surface,
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 12,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    shadowColor: colors.shadow,
-    shadowOpacity: 0.05,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 8,
-    elevation: 2,
-  },
-  categoryContent: {
-    flexDirection: "row",
-    alignItems: "center",
-    flex: 1,
-  },
-  categoryIcon: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    justifyContent: "center",
-    alignItems: "center",
-    marginRight: 16,
-  },
-  categoryInfo: {
-    flex: 1,
-  },
-  categoryName: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: colors.text,
-    marginBottom: 2,
-  },
-  categoryCount: {
-    fontSize: 14,
-    color: colors.textSecondary,
-  },
-  categoryActions: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-  },
-  editButton: {
-    padding: 8,
-    borderRadius: 8,
-    backgroundColor: colors.borderLight,
-  },
-  navButton: {
-    padding: 4,
-  },
-  createCategoryButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: colors.surface,
-    borderRadius: 12,
-    padding: 16,
-    borderWidth: 2,
-    borderColor: colors.border,
-    borderStyle: "dashed",
-    marginBottom: 20,
-    gap: 8,
-  },
-  createCategoryText: {
-    fontSize: 16,
-    fontWeight: "500",
-    color: colors.primary,
-  },
-});
+const createStyles = (colors: any) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: colors.background,
+    },
+    header: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      paddingHorizontal: 16,
+      paddingTop: 60,
+      paddingBottom: 16,
+      backgroundColor: colors.surface,
+      borderBottomWidth: 1,
+      borderBottomColor: colors.border,
+    },
+    title: {
+      fontSize: 28,
+      fontWeight: "700",
+      color: colors.text,
+    },
+    addButton: {
+      width: 40,
+      height: 40,
+      borderRadius: 20,
+      backgroundColor: colors.primary,
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    content: {
+      flex: 1,
+      paddingHorizontal: 16,
+    },
+    statsContainer: {
+      flexDirection: "row",
+      marginTop: 20,
+      marginBottom: 24,
+      gap: 12,
+    },
+    statsCard: {
+      flex: 1,
+      backgroundColor: colors.surface,
+      borderRadius: 12,
+      padding: 20,
+      alignItems: "center",
+      shadowColor: colors.shadow,
+      shadowOpacity: 0.05,
+      shadowOffset: { width: 0, height: 2 },
+      shadowRadius: 8,
+      elevation: 2,
+    },
+    statsNumber: {
+      fontSize: 28,
+      fontWeight: "700",
+      color: colors.text,
+      marginBottom: 4,
+    },
+    statsLabel: {
+      fontSize: 14,
+      color: colors.textSecondary,
+      textAlign: "center",
+    },
+    categoriesContainer: {
+      marginBottom: 24,
+    },
+    categoryCard: {
+      backgroundColor: colors.surface,
+      borderRadius: 12,
+      padding: 16,
+      marginBottom: 12,
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      shadowColor: colors.shadow,
+      shadowOpacity: 0.05,
+      shadowOffset: { width: 0, height: 2 },
+      shadowRadius: 8,
+      elevation: 2,
+    },
+    categoryContent: {
+      flexDirection: "row",
+      alignItems: "center",
+      flex: 1,
+    },
+    categoryIcon: {
+      width: 48,
+      height: 48,
+      borderRadius: 24,
+      justifyContent: "center",
+      alignItems: "center",
+      marginRight: 16,
+    },
+    categoryInfo: {
+      flex: 1,
+    },
+    categoryName: {
+      fontSize: 16,
+      fontWeight: "600",
+      color: colors.text,
+      marginBottom: 2,
+    },
+    categoryCount: {
+      fontSize: 14,
+      color: colors.textSecondary,
+    },
+    categoryActions: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 8,
+    },
+    editButton: {
+      padding: 8,
+      borderRadius: 8,
+      backgroundColor: colors.borderLight,
+    },
+    navButton: {
+      padding: 4,
+    },
+    createCategoryButton: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: colors.surface,
+      borderRadius: 12,
+      padding: 16,
+      borderWidth: 2,
+      borderColor: colors.border,
+      borderStyle: "dashed",
+      marginBottom: 20,
+      gap: 8,
+    },
+    createCategoryText: {
+      fontSize: 16,
+      fontWeight: "500",
+      color: colors.primary,
+    },
+  });

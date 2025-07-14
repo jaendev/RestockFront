@@ -34,8 +34,8 @@ export default function CategoryDetailScreen() {
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [showEditForm, setShowEditForm] = useState(false);
 
-  const { categories } = useCategories();
-  const { products, refetch } = useProducts();
+  const { categories, refetch: refetchCategories } = useCategories();
+  const { products, refetch: refetchProducts } = useProducts();
 
   const categoryId = parseInt(id);
   const category = categories?.find((c) => c.id === categoryId);
@@ -48,7 +48,7 @@ export default function CategoryDetailScreen() {
   const handleCreateProduct = async (productData: CreateProductDto) => {
     try {
       await createProduct(productData);
-      await refetch();
+      await refetchProducts();
     } catch (error) {
       console.error("Error creating product:", error);
       throw error;
@@ -60,14 +60,11 @@ export default function CategoryDetailScreen() {
     categoryData: UpdateCategoryDto,
   ) => {
     try {
-      console.log("🔄 Updating category:", categoryId, categoryData);
       await updateCategory(categoryId, categoryData);
-      console.log("✅ Category updated successfully");
-      // Refresh categories to get updated data
-      // Note: We might need to refresh the specific category data here
+      await refetchCategories();
       // since we're getting it from the categories list
     } catch (error) {
-      console.error("❌ Error updating category:", error);
+      console.error("Error updating category:", error);
       throw error;
     }
   };
@@ -345,7 +342,7 @@ export default function CategoryDetailScreen() {
 
           {/* Action Buttons */}
           <View style={styles.actionSection}>
-            <TouchableOpacity 
+            <TouchableOpacity
               style={styles.primaryButton}
               onPress={() => setShowEditForm(true)}
             >
@@ -381,291 +378,292 @@ export default function CategoryDetailScreen() {
 }
 
 // Dynamic styles based on theme colors
-const createStyles = (colors: any) => StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingHorizontal: 16,
-    paddingTop: 60,
-    paddingBottom: 16,
-    backgroundColor: colors.surface,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
-  },
-  backButton: {
-    padding: 8,
-    borderRadius: 8,
-    backgroundColor: colors.borderLight,
-  },
-  headerTitle: {
-    fontSize: 18,
-    fontWeight: "600",
-    color: colors.text,
-  },
-  editButton: {
-    padding: 8,
-    borderRadius: 8,
-    backgroundColor: colors.borderLight,
-  },
-  content: {
-    flex: 1,
-  },
-  categoryCard: {
-    backgroundColor: colors.surface,
-    margin: 16,
-    borderRadius: 16,
-    padding: 20,
-    shadowColor: colors.shadow,
-    shadowOpacity: 0.05,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 8,
-    elevation: 2,
-  },
-  categoryHeader: {
-    alignItems: "center",
-    marginBottom: 24,
-  },
-  categoryIcon: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    justifyContent: "center",
-    alignItems: "center",
-    marginBottom: 16,
-  },
-  categoryName: {
-    fontSize: 24,
-    fontWeight: "700",
-    color: colors.text,
-    textAlign: "center",
-    marginBottom: 8,
-  },
-  categoryDescription: {
-    fontSize: 16,
-    color: colors.textSecondary,
-    textAlign: "center",
-  },
-  statsSection: {
-    marginBottom: 24,
-    paddingBottom: 24,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.borderLight,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: "600",
-    color: colors.text,
-    marginBottom: 16,
-  },
-  statsGrid: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginBottom: 16,
-  },
-  statCard: {
-    flex: 1,
-    alignItems: "center",
-    padding: 12,
-    backgroundColor: colors.borderLight,
-    borderRadius: 12,
-    marginHorizontal: 4,
-  },
-  statIconContainer: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: colors.primaryLight,
-    justifyContent: "center",
-    alignItems: "center",
-    marginBottom: 8,
-  },
-  statNumber: {
-    fontSize: 18,
-    fontWeight: "700",
-    color: colors.text,
-    marginBottom: 4,
-  },
-  statLabel: {
-    fontSize: 11,
-    color: colors.textSecondary,
-    textAlign: "center",
-  },
-  detailedStats: {
-    gap: 8,
-  },
-  statRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingVertical: 8,
-  },
-  statRowLabel: {
-    fontSize: 14,
-    color: colors.textSecondary,
-  },
-  statRowValue: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: colors.text,
-  },
-  productsSection: {
-    marginBottom: 24,
-  },
-  productsHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 16,
-  },
-  toggleButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    backgroundColor: colors.borderLight,
-    borderRadius: 8,
-  },
-  toggleButtonText: {
-    fontSize: 12,
-    color: colors.textSecondary,
-    fontWeight: "500",
-  },
-  productsContainer: {
-    gap: 12,
-  },
-  emptyState: {
-    alignItems: "center",
-    paddingVertical: 40,
-  },
-  emptyStateText: {
-    fontSize: 16,
-    color: colors.textMuted,
-    marginTop: 12,
-  },
-  productCard: {
-    backgroundColor: colors.borderLight,
-    borderRadius: 12,
-    padding: 16,
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
-  inactiveProductCard: {
-    opacity: 0.6,
-    backgroundColor: colors.borderLight,
-  },
-  productHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 12,
-  },
-  productIcon: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: colors.primaryLight,
-    justifyContent: "center",
-    alignItems: "center",
-    marginRight: 12,
-  },
-  productInfo: {
-    flex: 1,
-  },
-  productName: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: colors.text,
-    marginBottom: 2,
-  },
-  inactiveText: {
-    color: colors.textMuted,
-  },
-  productPrice: {
-    fontSize: 12,
-    color: colors.textSecondary,
-    fontWeight: "500",
-  },
-  productStatus: {
-    alignItems: "flex-end",
-  },
-  statusBadge: {
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 12,
-  },
-  statusText: {
-    fontSize: 10,
-    fontWeight: "500",
-  },
-  productDetails: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-  },
-  productDetailItem: {
-    alignItems: "center",
-  },
-  productDetailLabel: {
-    fontSize: 11,
-    color: colors.textMuted,
-    marginBottom: 4,
-  },
-  productDetailValue: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: colors.text,
-  },
-  actionSection: {
-    gap: 12,
-  },
-  primaryButton: {
-    backgroundColor: colors.primary,
-    paddingVertical: 16,
-    borderRadius: 12,
-    alignItems: "center",
-  },
-  primaryButtonText: {
-    color: colors.surface,
-    fontSize: 16,
-    fontWeight: "600",
-  },
-  secondaryButton: {
-    backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.border,
-    paddingVertical: 16,
-    borderRadius: 12,
-    alignItems: "center",
-  },
-  secondaryButtonText: {
-    color: colors.textSecondary,
-    fontSize: 16,
-    fontWeight: "600",
-  },
-  errorContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 20,
-  },
-  errorText: {
-    fontSize: 18,
-    color: colors.error,
-    marginBottom: 16,
-    textAlign: "center",
-  },
-  errorButton: {
-    backgroundColor: colors.primary,
-    paddingHorizontal: 24,
-    paddingVertical: 12,
-    borderRadius: 8,
-  },
-  errorButtonText: {
-    color: colors.surface,
-    fontWeight: "600",
-  },
-});
+const createStyles = (colors: any) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: colors.background,
+    },
+    header: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      paddingHorizontal: 16,
+      paddingTop: 60,
+      paddingBottom: 16,
+      backgroundColor: colors.surface,
+      borderBottomWidth: 1,
+      borderBottomColor: colors.border,
+    },
+    backButton: {
+      padding: 8,
+      borderRadius: 8,
+      backgroundColor: colors.borderLight,
+    },
+    headerTitle: {
+      fontSize: 18,
+      fontWeight: "600",
+      color: colors.text,
+    },
+    editButton: {
+      padding: 8,
+      borderRadius: 8,
+      backgroundColor: colors.borderLight,
+    },
+    content: {
+      flex: 1,
+    },
+    categoryCard: {
+      backgroundColor: colors.surface,
+      margin: 16,
+      borderRadius: 16,
+      padding: 20,
+      shadowColor: colors.shadow,
+      shadowOpacity: 0.05,
+      shadowOffset: { width: 0, height: 2 },
+      shadowRadius: 8,
+      elevation: 2,
+    },
+    categoryHeader: {
+      alignItems: "center",
+      marginBottom: 24,
+    },
+    categoryIcon: {
+      width: 80,
+      height: 80,
+      borderRadius: 40,
+      justifyContent: "center",
+      alignItems: "center",
+      marginBottom: 16,
+    },
+    categoryName: {
+      fontSize: 24,
+      fontWeight: "700",
+      color: colors.text,
+      textAlign: "center",
+      marginBottom: 8,
+    },
+    categoryDescription: {
+      fontSize: 16,
+      color: colors.textSecondary,
+      textAlign: "center",
+    },
+    statsSection: {
+      marginBottom: 24,
+      paddingBottom: 24,
+      borderBottomWidth: 1,
+      borderBottomColor: colors.borderLight,
+    },
+    sectionTitle: {
+      fontSize: 18,
+      fontWeight: "600",
+      color: colors.text,
+      marginBottom: 16,
+    },
+    statsGrid: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      marginBottom: 16,
+    },
+    statCard: {
+      flex: 1,
+      alignItems: "center",
+      padding: 12,
+      backgroundColor: colors.borderLight,
+      borderRadius: 12,
+      marginHorizontal: 4,
+    },
+    statIconContainer: {
+      width: 40,
+      height: 40,
+      borderRadius: 20,
+      backgroundColor: colors.primaryLight,
+      justifyContent: "center",
+      alignItems: "center",
+      marginBottom: 8,
+    },
+    statNumber: {
+      fontSize: 18,
+      fontWeight: "700",
+      color: colors.text,
+      marginBottom: 4,
+    },
+    statLabel: {
+      fontSize: 11,
+      color: colors.textSecondary,
+      textAlign: "center",
+    },
+    detailedStats: {
+      gap: 8,
+    },
+    statRow: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      paddingVertical: 8,
+    },
+    statRowLabel: {
+      fontSize: 14,
+      color: colors.textSecondary,
+    },
+    statRowValue: {
+      fontSize: 14,
+      fontWeight: "600",
+      color: colors.text,
+    },
+    productsSection: {
+      marginBottom: 24,
+    },
+    productsHeader: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      marginBottom: 16,
+    },
+    toggleButton: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 6,
+      paddingHorizontal: 12,
+      paddingVertical: 6,
+      backgroundColor: colors.borderLight,
+      borderRadius: 8,
+    },
+    toggleButtonText: {
+      fontSize: 12,
+      color: colors.textSecondary,
+      fontWeight: "500",
+    },
+    productsContainer: {
+      gap: 12,
+    },
+    emptyState: {
+      alignItems: "center",
+      paddingVertical: 40,
+    },
+    emptyStateText: {
+      fontSize: 16,
+      color: colors.textMuted,
+      marginTop: 12,
+    },
+    productCard: {
+      backgroundColor: colors.borderLight,
+      borderRadius: 12,
+      padding: 16,
+      borderWidth: 1,
+      borderColor: colors.border,
+    },
+    inactiveProductCard: {
+      opacity: 0.6,
+      backgroundColor: colors.borderLight,
+    },
+    productHeader: {
+      flexDirection: "row",
+      alignItems: "center",
+      marginBottom: 12,
+    },
+    productIcon: {
+      width: 32,
+      height: 32,
+      borderRadius: 16,
+      backgroundColor: colors.primaryLight,
+      justifyContent: "center",
+      alignItems: "center",
+      marginRight: 12,
+    },
+    productInfo: {
+      flex: 1,
+    },
+    productName: {
+      fontSize: 14,
+      fontWeight: "600",
+      color: colors.text,
+      marginBottom: 2,
+    },
+    inactiveText: {
+      color: colors.textMuted,
+    },
+    productPrice: {
+      fontSize: 12,
+      color: colors.textSecondary,
+      fontWeight: "500",
+    },
+    productStatus: {
+      alignItems: "flex-end",
+    },
+    statusBadge: {
+      paddingHorizontal: 8,
+      paddingVertical: 4,
+      borderRadius: 12,
+    },
+    statusText: {
+      fontSize: 10,
+      fontWeight: "500",
+    },
+    productDetails: {
+      flexDirection: "row",
+      justifyContent: "space-around",
+    },
+    productDetailItem: {
+      alignItems: "center",
+    },
+    productDetailLabel: {
+      fontSize: 11,
+      color: colors.textMuted,
+      marginBottom: 4,
+    },
+    productDetailValue: {
+      fontSize: 14,
+      fontWeight: "600",
+      color: colors.text,
+    },
+    actionSection: {
+      gap: 12,
+    },
+    primaryButton: {
+      backgroundColor: colors.primary,
+      paddingVertical: 16,
+      borderRadius: 12,
+      alignItems: "center",
+    },
+    primaryButtonText: {
+      color: colors.surface,
+      fontSize: 16,
+      fontWeight: "600",
+    },
+    secondaryButton: {
+      backgroundColor: colors.surface,
+      borderWidth: 1,
+      borderColor: colors.border,
+      paddingVertical: 16,
+      borderRadius: 12,
+      alignItems: "center",
+    },
+    secondaryButtonText: {
+      color: colors.textSecondary,
+      fontSize: 16,
+      fontWeight: "600",
+    },
+    errorContainer: {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+      padding: 20,
+    },
+    errorText: {
+      fontSize: 18,
+      color: colors.error,
+      marginBottom: 16,
+      textAlign: "center",
+    },
+    errorButton: {
+      backgroundColor: colors.primary,
+      paddingHorizontal: 24,
+      paddingVertical: 12,
+      borderRadius: 8,
+    },
+    errorButtonText: {
+      color: colors.surface,
+      fontWeight: "600",
+    },
+  });

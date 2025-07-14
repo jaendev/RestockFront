@@ -44,11 +44,9 @@ export default function ProductDetailScreen() {
   const updateStockProduct = async (newQuantity: number) => {
     if (newQuantity < 0) return;
     try {
-      console.log("Updating stock...", newQuantity, productId);
       setQuantity(newQuantity);
       await updateStock(productId, newQuantity);
       await refetch();
-      console.log("Stock updated successfully");
     } catch (error) {
       console.error("Error updating stock:", error);
       setQuantity(product?.currentStock || 0);
@@ -63,7 +61,6 @@ export default function ProductDetailScreen() {
     try {
       await updateProduct(productId, productData);
       await refetch();
-      console.log("Producto actualizado exitosamente");
     } catch (error) {
       console.error("Error updating product:", error);
       throw error;
@@ -271,219 +268,220 @@ export default function ProductDetailScreen() {
 }
 
 // Dynamic styles based on theme colors
-const createStyles = (colors: any) => StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingHorizontal: 16,
-    paddingTop: 60,
-    paddingBottom: 16,
-    backgroundColor: colors.surface,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
-  },
-  backButton: {
-    padding: 8,
-    borderRadius: 8,
-    backgroundColor: colors.borderLight,
-  },
-  headerTitle: {
-    fontSize: 18,
-    fontWeight: "600",
-    color: colors.text,
-  },
-  editButton: {
-    padding: 8,
-    borderRadius: 8,
-    backgroundColor: colors.borderLight,
-  },
-  content: {
-    flex: 1,
-  },
-  productCard: {
-    backgroundColor: colors.surface,
-    margin: 16,
-    borderRadius: 16,
-    padding: 20,
-    shadowColor: colors.shadow,
-    shadowOpacity: 0.05,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 8,
-    elevation: 2,
-  },
-  productHeader: {
-    alignItems: "center",
-    marginBottom: 24,
-  },
-  productIcon: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    backgroundColor: colors.primaryLight,
-    justifyContent: "center",
-    alignItems: "center",
-    marginBottom: 16,
-  },
-  productName: {
-    fontSize: 24,
-    fontWeight: "700",
-    color: colors.text,
-    textAlign: "center",
-    marginBottom: 8,
-  },
-  productDescription: {
-    fontSize: 16,
-    color: colors.textSecondary,
-    textAlign: "center",
-  },
-  stockSection: {
-    marginBottom: 24,
-    paddingBottom: 24,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.borderLight,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: "600",
-    color: colors.text,
-    marginBottom: 16,
-  },
-  stockRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 12,
-  },
-  stockInfo: {
-    flex: 1,
-  },
-  stockLabel: {
-    fontSize: 14,
-    color: colors.textSecondary,
-    marginBottom: 4,
-  },
-  stockValue: {
-    fontSize: 28,
-    fontWeight: "700",
-  },
-  stockControls: {
-    flexDirection: "row",
-    gap: 8,
-  },
-  stockButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: colors.borderLight,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  minStockRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  minStockLabel: {
-    fontSize: 14,
-    color: colors.textSecondary,
-  },
-  lowStockBadge: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: colors.warningLight,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 12,
-    gap: 4,
-  },
-  lowStockText: {
-    fontSize: 12,
-    color: colors.warning,
-    fontWeight: "500",
-  },
-  infoSection: {
-    marginBottom: 24,
-  },
-  infoRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingVertical: 12,
-  },
-  infoLabel: {
-    fontSize: 16,
-    color: colors.textSecondary,
-  },
-  infoValue: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: colors.text,
-  },
-  categoryBadge: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 16,
-  },
-  categoryText: {
-    fontSize: 14,
-    fontWeight: "500",
-  },
-  statusText: {
-    fontSize: 16,
-    fontWeight: "600",
-  },
-  actionSection: {
-    gap: 12,
-  },
-  primaryButton: {
-    backgroundColor: colors.primary,
-    paddingVertical: 16,
-    borderRadius: 12,
-    alignItems: "center",
-  },
-  primaryButtonText: {
-    color: colors.surface,
-    fontSize: 16,
-    fontWeight: "600",
-  },
-  secondaryButton: {
-    backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.border,
-    paddingVertical: 16,
-    borderRadius: 12,
-    alignItems: "center",
-  },
-  secondaryButtonText: {
-    color: colors.textSecondary,
-    fontSize: 16,
-    fontWeight: "600",
-  },
-  errorContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 20,
-  },
-  errorText: {
-    fontSize: 18,
-    color: colors.error,
-    marginBottom: 16,
-    textAlign: "center",
-  },
-  errorButton: {
-    backgroundColor: colors.primary,
-    paddingHorizontal: 24,
-    paddingVertical: 12,
-    borderRadius: 8,
-  },
-  errorButtonText: {
-    color: colors.surface,
-    fontWeight: "600",
-  },
-});
+const createStyles = (colors: any) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: colors.background,
+    },
+    header: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      paddingHorizontal: 16,
+      paddingTop: 60,
+      paddingBottom: 16,
+      backgroundColor: colors.surface,
+      borderBottomWidth: 1,
+      borderBottomColor: colors.border,
+    },
+    backButton: {
+      padding: 8,
+      borderRadius: 8,
+      backgroundColor: colors.borderLight,
+    },
+    headerTitle: {
+      fontSize: 18,
+      fontWeight: "600",
+      color: colors.text,
+    },
+    editButton: {
+      padding: 8,
+      borderRadius: 8,
+      backgroundColor: colors.borderLight,
+    },
+    content: {
+      flex: 1,
+    },
+    productCard: {
+      backgroundColor: colors.surface,
+      margin: 16,
+      borderRadius: 16,
+      padding: 20,
+      shadowColor: colors.shadow,
+      shadowOpacity: 0.05,
+      shadowOffset: { width: 0, height: 2 },
+      shadowRadius: 8,
+      elevation: 2,
+    },
+    productHeader: {
+      alignItems: "center",
+      marginBottom: 24,
+    },
+    productIcon: {
+      width: 80,
+      height: 80,
+      borderRadius: 40,
+      backgroundColor: colors.primaryLight,
+      justifyContent: "center",
+      alignItems: "center",
+      marginBottom: 16,
+    },
+    productName: {
+      fontSize: 24,
+      fontWeight: "700",
+      color: colors.text,
+      textAlign: "center",
+      marginBottom: 8,
+    },
+    productDescription: {
+      fontSize: 16,
+      color: colors.textSecondary,
+      textAlign: "center",
+    },
+    stockSection: {
+      marginBottom: 24,
+      paddingBottom: 24,
+      borderBottomWidth: 1,
+      borderBottomColor: colors.borderLight,
+    },
+    sectionTitle: {
+      fontSize: 18,
+      fontWeight: "600",
+      color: colors.text,
+      marginBottom: 16,
+    },
+    stockRow: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      marginBottom: 12,
+    },
+    stockInfo: {
+      flex: 1,
+    },
+    stockLabel: {
+      fontSize: 14,
+      color: colors.textSecondary,
+      marginBottom: 4,
+    },
+    stockValue: {
+      fontSize: 28,
+      fontWeight: "700",
+    },
+    stockControls: {
+      flexDirection: "row",
+      gap: 8,
+    },
+    stockButton: {
+      width: 40,
+      height: 40,
+      borderRadius: 20,
+      backgroundColor: colors.borderLight,
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    minStockRow: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+    },
+    minStockLabel: {
+      fontSize: 14,
+      color: colors.textSecondary,
+    },
+    lowStockBadge: {
+      flexDirection: "row",
+      alignItems: "center",
+      backgroundColor: colors.warningLight,
+      paddingHorizontal: 8,
+      paddingVertical: 4,
+      borderRadius: 12,
+      gap: 4,
+    },
+    lowStockText: {
+      fontSize: 12,
+      color: colors.warning,
+      fontWeight: "500",
+    },
+    infoSection: {
+      marginBottom: 24,
+    },
+    infoRow: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      paddingVertical: 12,
+    },
+    infoLabel: {
+      fontSize: 16,
+      color: colors.textSecondary,
+    },
+    infoValue: {
+      fontSize: 16,
+      fontWeight: "600",
+      color: colors.text,
+    },
+    categoryBadge: {
+      paddingHorizontal: 12,
+      paddingVertical: 6,
+      borderRadius: 16,
+    },
+    categoryText: {
+      fontSize: 14,
+      fontWeight: "500",
+    },
+    statusText: {
+      fontSize: 16,
+      fontWeight: "600",
+    },
+    actionSection: {
+      gap: 12,
+    },
+    primaryButton: {
+      backgroundColor: colors.primary,
+      paddingVertical: 16,
+      borderRadius: 12,
+      alignItems: "center",
+    },
+    primaryButtonText: {
+      color: colors.surface,
+      fontSize: 16,
+      fontWeight: "600",
+    },
+    secondaryButton: {
+      backgroundColor: colors.surface,
+      borderWidth: 1,
+      borderColor: colors.border,
+      paddingVertical: 16,
+      borderRadius: 12,
+      alignItems: "center",
+    },
+    secondaryButtonText: {
+      color: colors.textSecondary,
+      fontSize: 16,
+      fontWeight: "600",
+    },
+    errorContainer: {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+      padding: 20,
+    },
+    errorText: {
+      fontSize: 18,
+      color: colors.error,
+      marginBottom: 16,
+      textAlign: "center",
+    },
+    errorButton: {
+      backgroundColor: colors.primary,
+      paddingHorizontal: 24,
+      paddingVertical: 12,
+      borderRadius: 8,
+    },
+    errorButtonText: {
+      color: colors.surface,
+      fontWeight: "600",
+    },
+  });
