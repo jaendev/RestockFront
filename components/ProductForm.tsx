@@ -10,6 +10,7 @@ import {
   Modal,
   KeyboardAvoidingView,
   Platform,
+  Switch,
 } from "react-native";
 import { useCategories } from "@/hooks/useCategories";
 import {
@@ -29,7 +30,7 @@ interface ProductFormProps {
   currentCategoryId?: number;
   editProduct?: Product | null;
   onSubmit: (product: CreateProductDto) => Promise<void>;
-  onUpdate?: (productId: number, product: UpdateProductDto) => Promise<void>; // ✅ NUEVO: Función de actualización
+  onUpdate?: (productId: number, product: UpdateProductDto) => Promise<void>;
 }
 
 export function ProductForm({
@@ -60,6 +61,7 @@ export function ProductForm({
     price: 0,
     categoryId: currentCategoryId || 1,
     imageUrl: null,
+    isActive: true, // Default to active for new products
   });
 
   useEffect(() => {
@@ -82,6 +84,7 @@ export function ProductForm({
           price: editProduct.price || 0,
           categoryId: editProduct.categoryId,
           imageUrl: editProduct.imageUrl || null,
+          isActive: editProduct.isActive, // Include isActive from existing product
         });
 
         setSelectedCategory(targetCategory?.name || "");
@@ -105,6 +108,7 @@ export function ProductForm({
           price: 0,
           categoryId: targetCategoryId,
           imageUrl: null,
+          isActive: true, // Default to active for new products
         });
 
         setSelectedCategory(targetCategory?.name || "");
@@ -126,7 +130,7 @@ export function ProductForm({
 
   const updateField = (
     field: keyof CreateProductDto,
-    value: string | number,
+    value: string | number | boolean,
   ) => {
     setFormData((prev) => ({
       ...prev,
@@ -152,6 +156,11 @@ export function ProductForm({
     const unit = unitTypes.find((u) => u.id === unitId);
     setSelectedUnit(`${unit?.name} (${unit?.symbol})` || "");
     updateField("unitId", unitId);
+  };
+
+  // Handle toggle product active status (local state only)
+  const handleToggleIsActive = () => {
+    updateField("isActive", !formData.isActive);
   };
 
   const validateForm = (): boolean => {
@@ -475,6 +484,25 @@ export function ProductForm({
                 💡 El stock mínimo sirve para generar alertas automáticas cuando
                 el inventario está bajo
               </Text>
+            </View>
+          </View>
+
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Estado del Producto</Text>
+            <View style={styles.toggleContainer}>
+              <View style={styles.toggleInfo}>
+                <Text style={styles.toggleLabel}>Producto Activo</Text>
+                <Text style={styles.toggleDescription}>
+                  {formData.isActive ? "El producto está disponible en el inventario" : "El producto está deshabilitado"}
+                </Text>
+              </View>
+              <Switch
+                value={formData.isActive || false}
+                onValueChange={handleToggleIsActive}
+                trackColor={{ false: "#E5E7EB", true: "#DBEAFE" }}
+                thumbColor={formData.isActive ? "#2563EB" : "#FFFFFF"}
+                ios_backgroundColor="#E5E7EB"
+              />
             </View>
           </View>
 
@@ -820,6 +848,31 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: "#1E40AF",
     lineHeight: 18,
+  },
+  toggleContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    backgroundColor: "#FFFFFF",
+    borderRadius: 12,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: "#E5E7EB",
+  },
+  toggleInfo: {
+    flex: 1,
+    marginRight: 16,
+  },
+  toggleLabel: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#111827",
+    marginBottom: 4,
+  },
+  toggleDescription: {
+    fontSize: 14,
+    color: "#6B7280",
+    lineHeight: 20,
   },
   previewSection: {
     marginBottom: 32,

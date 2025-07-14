@@ -35,3 +35,10 @@ export interface CreateCategoryRequest {
   name: string;
   color: string;
 }
+
+export interface UpdateCategoryDto {
+  name: string;
+  description?: string;
+  color: string;
+  isActive?: boolean;
+}

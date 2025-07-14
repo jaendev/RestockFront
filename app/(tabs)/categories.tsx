@@ -1,6 +1,7 @@
 import { useCategories } from "@/hooks/useCategories";
 import { router } from "expo-router";
-import { ChevronRight, FolderOpen, Plus } from "lucide-react-native";
+import { ChevronRight, FolderOpen, Plus, Edit } from "lucide-react-native";
+import { useState } from "react";
 import {
   ScrollView,
   StyleSheet,
@@ -8,18 +9,70 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { CategoryForm } from "@/components/CategoryForm";
+import { createCategory, updateCategory } from "@/services/categoryService";
+import { Category, CreateCategoryRequest, UpdateCategoryDto } from "@/types/category";
 
 export default function CategoriesScreen() {
-  const { categories } = useCategories();
+  const { categories, refetch } = useCategories();
+  
+  // Form state management
+  const [showCreateForm, setShowCreateForm] = useState(false);
+  const [editingCategory, setEditingCategory] = useState<Category | null>(null);
+
+  // Handle create category
+  const handleCreateCategory = async (categoryData: CreateCategoryRequest) => {
+    try {
+      await createCategory(categoryData);
+      await refetch(); // Refresh categories list
+    } catch (error) {
+      console.error("Error creating category:", error);
+      throw error;
+    }
+  };
+
+  // Handle update category
+  const handleUpdateCategory = async (categoryId: number, categoryData: UpdateCategoryDto) => {
+    try {
+      await updateCategory(categoryId, categoryData);
+      await refetch(); // Refresh categories list
+    } catch (error) {
+      console.error("Error updating category:", error);
+      throw error;
+    }
+  };
+
+  // Handle edit category
+  const handleEditCategory = (category: Category) => {
+    setEditingCategory(category);
+  };
+
+  // Handle close form
+  const handleCloseForm = () => {
+    setShowCreateForm(false);
+    setEditingCategory(null);
+  };
 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.title}>Categorias</Text>
-        <TouchableOpacity style={styles.addButton}>
+        <TouchableOpacity 
+          style={styles.addButton}
+          onPress={() => setShowCreateForm(true)}
+        >
           <Plus size={20} color="#FFFFFF" />
         </TouchableOpacity>
       </View>
+
+      {/* Category Form Modal */}
+      <CategoryForm
+        visible={showCreateForm || !!editingCategory}
+        onClose={handleCloseForm}
+        editCategory={editingCategory}
+        onSubmit={handleCreateCategory}
+        onUpdate={handleUpdateCategory}
+      />
 
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         <View style={styles.statsContainer}>
@@ -40,12 +93,11 @@ export default function CategoriesScreen() {
 
         <View style={styles.categoriesContainer}>
           {categories?.map((category) => (
-            <TouchableOpacity
-              onPress={() => router.push(`/category/${category.id}`)}
-              key={category.id}
-              style={styles.categoryCard}
-            >
-              <View style={styles.categoryContent}>
+            <View key={category.id} style={styles.categoryCard}>
+              <TouchableOpacity
+                onPress={() => router.push(`/category/${category.id}`)}
+                style={styles.categoryContent}
+              >
                 <View
                   style={[
                     styles.categoryIcon,
@@ -60,13 +112,30 @@ export default function CategoriesScreen() {
                     {category.totalProducts} items
                   </Text>
                 </View>
+              </TouchableOpacity>
+              
+              <View style={styles.categoryActions}>
+                <TouchableOpacity
+                  style={styles.editButton}
+                  onPress={() => handleEditCategory(category)}
+                >
+                  <Edit size={16} color="#6B7280" />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.navButton}
+                  onPress={() => router.push(`/category/${category.id}`)}
+                >
+                  <ChevronRight size={20} color="#9CA3AF" />
+                </TouchableOpacity>
               </View>
-              <ChevronRight size={20} color="#9CA3AF" />
-            </TouchableOpacity>
+            </View>
           ))}
         </View>
 
-        <TouchableOpacity style={styles.createCategoryButton}>
+        <TouchableOpacity 
+          style={styles.createCategoryButton}
+          onPress={() => setShowCreateForm(true)}
+        >
           <Plus size={20} color="#2563EB" />
           <Text style={styles.createCategoryText}>Crear nueva categoria</Text>
         </TouchableOpacity>
@@ -179,6 +248,19 @@ const styles = StyleSheet.create({
   categoryCount: {
     fontSize: 14,
     color: "#6B7280",
+  },
+  categoryActions: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
+  editButton: {
+    padding: 8,
+    borderRadius: 8,
+    backgroundColor: "#F3F4F6",
+  },
+  navButton: {
+    padding: 4,
   },
   createCategoryButton: {
     flexDirection: "row",

@@ -51,6 +51,7 @@ export interface CreateProductDto {
   price?: number;
   categoryId: number;
   imageUrl?: string | null | undefined;
+  isActive?: boolean;
 }
 
 export interface UnitType {
@@ -75,4 +76,5 @@ export interface UpdateProductDto {
   price?: number;
   categoryId?: number;
   imageUrl?: string | null;
+  isActive?: boolean;
 }

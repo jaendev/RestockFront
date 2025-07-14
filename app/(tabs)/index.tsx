@@ -7,12 +7,16 @@ import { useAlert } from "@/hooks/useAlert";
 import { useCategories } from "@/hooks/useCategories";
 import { useProducts } from "@/hooks/useProducts";
 import { AlertTriangle, Package, TrendingUp } from "lucide-react-native";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 
 export default function HomeScreen() {
-  const { cantProducts, cantLowStockProducts } = useProducts();
-  const { cantCategories } = useCategories();
+  const {
+    cantProducts,
+    cantLowStockProducts,
+    refetch: refetchProducts,
+  } = useProducts();
+  const { cantCategories, refetch: refetchCategories } = useCategories();
   const [showLowStockAlert, setShowLowStockAler] = useState<boolean>(false);
   const [showRecentActivity, setShowRecentActivity] = useState<boolean>(false);
   const { alerts } = useAlert();
@@ -25,6 +29,11 @@ export default function HomeScreen() {
   const showAllLowStockAlerts = () => {
     setShowLowStockAler(!showLowStockAlert);
   };
+
+  useEffect(() => {
+    refetchProducts();
+    refetchCategories();
+  }, [refetchProducts, refetchCategories]);
 
   return (
     <View style={styles.container}>

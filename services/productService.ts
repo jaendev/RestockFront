@@ -26,3 +26,5 @@ export const updateProduct = (
   productData: UpdateProductDto,
 ) =>
   apiClient.patch<Product>(`/product/updateProduct/${productId}`, productData);
+export const toggleProductActive = (productId?: number) =>
+  apiClient.patch<Product>(`/product/toggleProductActive/${productId}`, {});
