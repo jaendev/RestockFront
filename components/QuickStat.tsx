@@ -1,6 +1,7 @@
 import { LucideIcon } from "lucide-react-native";
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
+import { useThemeColors } from "@/context/ThemeContext";
 
 interface QuickStatProps {
   cantItem: number;
@@ -10,11 +11,13 @@ interface QuickStatProps {
   backgroundColor?: string;
 }
 
-export default function QuickStat({ cantItem, color, label, icon: Icon, backgroundColor = '#DBEAFE' }: QuickStatProps) {
+export default function QuickStat({ cantItem, color, label, icon: Icon, backgroundColor }: QuickStatProps) {
+  const colors = useThemeColors();
+  const styles = createStyles(colors);
 
   return (
     <View style={styles.statCard}>
-      <View style={[styles.statIconContainer, { backgroundColor: backgroundColor }]}>
+      <View style={[styles.statIconContainer, { backgroundColor: backgroundColor || colors.primaryLight }]}>
         <Icon size={24} color={color} />
       </View>
       <Text style={styles.statNumber}>{cantItem}</Text>
@@ -23,15 +26,16 @@ export default function QuickStat({ cantItem, color, label, icon: Icon, backgrou
   )
 }
 
-const styles = StyleSheet.create({
+// Dynamic styles based on theme colors
+const createStyles = (colors: any) => StyleSheet.create({
   statCard: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.surface,
     borderRadius: 12,
     padding: 16,
     alignItems: 'center',
     marginHorizontal: 4,
-    shadowColor: '#000',
+    shadowColor: colors.shadow,
     shadowOpacity: 0.05,
     shadowOffset: { width: 0, height: 2 },
     shadowRadius: 8,
@@ -41,7 +45,6 @@ const styles = StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: 24,
-    backgroundColor: '#DBEAFE',
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 8
@@ -49,13 +52,12 @@ const styles = StyleSheet.create({
   statNumber: {
     fontSize: 24,
     fontWeight: '700',
-    color: '#111827',
+    color: colors.text,
     marginBottom: 4
   },
-
   statLabel: {
     fontSize: 12,
-    color: '#6B7280',
+    color: colors.textSecondary,
     textAlign: 'center',
   },
 })

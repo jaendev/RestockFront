@@ -27,7 +27,7 @@ export default {
       }),
 
       ...(process.env.NODE_ENV === "development" && {
-        apiBaseUrl: process.env.DEV_API_BASE_URL || "http://localhost:3000/api",
+        apiBaseUrl: process.env.DEV_API_BASE_URL || "http://localhost:5000/api",
         enableDebug: true,
       }),
     },

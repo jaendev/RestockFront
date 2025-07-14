@@ -1,4 +1,5 @@
 import { useCategories } from "@/hooks/useCategories";
+import { useThemeColors } from "@/context/ThemeContext";
 import { router } from "expo-router";
 import { ChevronRight, FolderOpen, Plus, Edit } from "lucide-react-native";
 import { useState } from "react";
@@ -14,6 +15,7 @@ import { createCategory, updateCategory } from "@/services/categoryService";
 import { Category, CreateCategoryRequest, UpdateCategoryDto } from "@/types/category";
 
 export default function CategoriesScreen() {
+  const colors = useThemeColors();
   const { categories, refetch } = useCategories();
   
   // Form state management
@@ -34,16 +36,20 @@ export default function CategoriesScreen() {
   // Handle update category
   const handleUpdateCategory = async (categoryId: number, categoryData: UpdateCategoryDto) => {
     try {
+      console.log("🔄 Updating category ID:", categoryId, "with data:", categoryData);
       await updateCategory(categoryId, categoryData);
+      console.log("✅ Category updated in service, refreshing list...");
       await refetch(); // Refresh categories list
+      console.log("✅ Categories list refreshed");
     } catch (error) {
-      console.error("Error updating category:", error);
+      console.error("❌ Error updating category:", error);
       throw error;
     }
   };
 
   // Handle edit category
   const handleEditCategory = (category: Category) => {
+    console.log("📝 Edit category clicked:", category.name, category);
     setEditingCategory(category);
   };
 
@@ -52,6 +58,8 @@ export default function CategoriesScreen() {
     setShowCreateForm(false);
     setEditingCategory(null);
   };
+
+  const styles = createStyles(colors);
 
   return (
     <View style={styles.container}>
@@ -119,13 +127,13 @@ export default function CategoriesScreen() {
                   style={styles.editButton}
                   onPress={() => handleEditCategory(category)}
                 >
-                  <Edit size={16} color="#6B7280" />
+                  <Edit size={16} color={colors.icon} />
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={styles.navButton}
                   onPress={() => router.push(`/category/${category.id}`)}
                 >
-                  <ChevronRight size={20} color="#9CA3AF" />
+                  <ChevronRight size={20} color={colors.textMuted} />
                 </TouchableOpacity>
               </View>
             </View>
@@ -144,10 +152,11 @@ export default function CategoriesScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+// Dynamic styles based on theme colors
+const createStyles = (colors: any) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F9FAFB",
+    backgroundColor: colors.background,
   },
   header: {
     flexDirection: "row",
@@ -156,20 +165,20 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingTop: 60,
     paddingBottom: 16,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.surface,
     borderBottomWidth: 1,
-    borderBottomColor: "#E5E7EB",
+    borderBottomColor: colors.border,
   },
   title: {
     fontSize: 28,
     fontWeight: "700",
-    color: "#111827",
+    color: colors.text,
   },
   addButton: {
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: "#2563EB",
+    backgroundColor: colors.primary,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -185,11 +194,11 @@ const styles = StyleSheet.create({
   },
   statsCard: {
     flex: 1,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.surface,
     borderRadius: 12,
     padding: 20,
     alignItems: "center",
-    shadowColor: "#000",
+    shadowColor: colors.shadow,
     shadowOpacity: 0.05,
     shadowOffset: { width: 0, height: 2 },
     shadowRadius: 8,
@@ -198,26 +207,26 @@ const styles = StyleSheet.create({
   statsNumber: {
     fontSize: 28,
     fontWeight: "700",
-    color: "#111827",
+    color: colors.text,
     marginBottom: 4,
   },
   statsLabel: {
     fontSize: 14,
-    color: "#6B7280",
+    color: colors.textSecondary,
     textAlign: "center",
   },
   categoriesContainer: {
     marginBottom: 24,
   },
   categoryCard: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.surface,
     borderRadius: 12,
     padding: 16,
     marginBottom: 12,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    shadowColor: "#000",
+    shadowColor: colors.shadow,
     shadowOpacity: 0.05,
     shadowOffset: { width: 0, height: 2 },
     shadowRadius: 8,
@@ -242,12 +251,12 @@ const styles = StyleSheet.create({
   categoryName: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#111827",
+    color: colors.text,
     marginBottom: 2,
   },
   categoryCount: {
     fontSize: 14,
-    color: "#6B7280",
+    color: colors.textSecondary,
   },
   categoryActions: {
     flexDirection: "row",
@@ -257,7 +266,7 @@ const styles = StyleSheet.create({
   editButton: {
     padding: 8,
     borderRadius: 8,
-    backgroundColor: "#F3F4F6",
+    backgroundColor: colors.borderLight,
   },
   navButton: {
     padding: 4,
@@ -266,11 +275,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.surface,
     borderRadius: 12,
     padding: 16,
     borderWidth: 2,
-    borderColor: "#E5E7EB",
+    borderColor: colors.border,
     borderStyle: "dashed",
     marginBottom: 20,
     gap: 8,
@@ -278,6 +287,6 @@ const styles = StyleSheet.create({
   createCategoryText: {
     fontSize: 16,
     fontWeight: "500",
-    color: "#2563EB",
+    color: colors.primary,
   },
 });

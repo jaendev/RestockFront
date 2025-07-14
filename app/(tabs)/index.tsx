@@ -6,11 +6,13 @@ import { ViewSelector } from "@/constants/ViewSelector";
 import { useAlert } from "@/hooks/useAlert";
 import { useCategories } from "@/hooks/useCategories";
 import { useProducts } from "@/hooks/useProducts";
+import { useThemeColors } from "@/context/ThemeContext";
 import { AlertTriangle, Package, TrendingUp } from "lucide-react-native";
 import { useEffect, useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 
 export default function HomeScreen() {
+  const colors = useThemeColors();
   const {
     cantProducts,
     cantLowStockProducts,
@@ -35,6 +37,8 @@ export default function HomeScreen() {
     refetchCategories();
   }, [refetchProducts, refetchCategories]);
 
+  const styles = createStyles(colors);
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -47,28 +51,28 @@ export default function HomeScreen() {
           {/* Total items */}
           <QuickStat
             cantItem={cantProducts?.totalProducts || 0}
-            color="#2563EB"
+            color={colors.primary}
             label="Productos totales"
             icon={Package}
-            backgroundColor="#DBEAFE"
+            backgroundColor={colors.primaryLight}
           />
 
           {/* Low stock */}
           <QuickStat
             cantItem={cantLowStockProducts?.totalProducts || 0}
-            color="#F59E0B"
+            color={colors.warning}
             label="Bajo stock"
             icon={AlertTriangle}
-            backgroundColor="#FEF3C7"
+            backgroundColor={colors.warningLight}
           />
 
           {/* Low Categories */}
           <QuickStat
             cantItem={cantCategories?.totalCategories || 0}
-            color="#10B981"
+            color={colors.success}
             label="Categorias"
             icon={TrendingUp}
-            backgroundColor="#D1FAE5"
+            backgroundColor={colors.successLight}
           />
         </View>
 
@@ -114,10 +118,11 @@ export default function HomeScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+// Dynamic styles based on theme colors
+const createStyles = (colors: any) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F9FAFB",
+    backgroundColor: colors.background,
   },
   header: {
     flexDirection: "row",
@@ -126,14 +131,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingTop: 60,
     paddingBottom: 16,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.surface,
     borderBottomWidth: 1,
-    borderBottomColor: "#E5E7EB",
+    borderBottomColor: colors.border,
   },
   title: {
     fontSize: 28,
     fontWeight: "700",
-    color: "#111827",
+    color: colors.text,
   },
   content: {
     flex: 1,
@@ -151,24 +156,24 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: "600",
-    color: "#111827",
+    color: colors.text,
     marginBottom: 16,
   },
   activityContainer: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.surface,
     borderRadius: 12,
     padding: 16,
-    shadowColor: "#000",
+    shadowColor: colors.shadow,
     shadowOpacity: 0.05,
     shadowOffset: { width: 0, height: 2 },
     shadowRadius: 8,
     elevation: 2,
   },
   alertsContainer: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.surface,
     borderRadius: 12,
     padding: 16,
-    shadowColor: "#000",
+    shadowColor: colors.shadow,
     shadowOpacity: 0.05,
     shadowOffset: { width: 0, height: 2 },
     shadowRadius: 8,
@@ -184,53 +189,48 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   viewMoreText: {
-    color: "#2563EB",
+    color: colors.primary,
   },
 
-  // Botón para abrir modal
+  // Button for opening modal
   openButton: {
-    backgroundColor: "#2563EB",
+    backgroundColor: colors.primary,
     paddingVertical: 12,
     paddingHorizontal: 24,
     borderRadius: 8,
   },
   openButtonText: {
-    color: "#FFFFFF",
+    color: colors.surface,
     fontSize: 16,
     fontWeight: "600",
   },
 
-  // Modal overlay (fondo)
-
-  // Contenido del modal
-
+  // Large modal
   largeModal: {
     width: "95%",
     maxHeight: "80%",
   },
 
-  // Cabecera del modal
-
+  // Enhanced header
   enhancedHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    backgroundColor: "#2563EB",
+    backgroundColor: colors.primary,
     paddingHorizontal: 20,
     paddingVertical: 16,
     borderTopLeftRadius: 12,
     borderTopRightRadius: 12,
   },
 
-  // Botones de cierre
-
+  // Enhanced close button
   enhancedCloseButton: {
     backgroundColor: "rgba(255, 255, 255, 0.2)",
     borderRadius: 20,
     padding: 8,
   },
 
-  // Cuerpo del modal
+  // Modal body
   modalBody: {
     paddingHorizontal: 20,
     paddingVertical: 16,
@@ -238,16 +238,16 @@ const styles = StyleSheet.create({
 
   modalText: {
     fontSize: 16,
-    color: "#374151",
+    color: colors.textSecondary,
     lineHeight: 24,
   },
 
-  // Footer del modal
+  // Modal footer
   modalFooter: {
     paddingHorizontal: 20,
     paddingVertical: 16,
     borderTopWidth: 1,
-    borderTopColor: "#E5E7EB",
+    borderTopColor: colors.border,
   },
 
   enhancedFooter: {
@@ -256,12 +256,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 16,
     borderTopWidth: 1,
-    borderTopColor: "#E5E7EB",
+    borderTopColor: colors.border,
     gap: 12,
   },
 
   closeModalButton: {
-    backgroundColor: "#F3F4F6",
+    backgroundColor: colors.borderLight,
     paddingVertical: 12,
     paddingHorizontal: 24,
     borderRadius: 8,
@@ -269,14 +269,14 @@ const styles = StyleSheet.create({
   },
 
   closeModalButtonText: {
-    color: "#374151",
+    color: colors.textSecondary,
     fontSize: 16,
     fontWeight: "600",
   },
 
   primaryButton: {
     flex: 1,
-    backgroundColor: "#2563EB",
+    backgroundColor: colors.primary,
     paddingVertical: 12,
     paddingHorizontal: 24,
     borderRadius: 8,
@@ -284,16 +284,16 @@ const styles = StyleSheet.create({
   },
 
   primaryButtonText: {
-    color: "#FFFFFF",
+    color: colors.surface,
     fontSize: 16,
     fontWeight: "600",
   },
 
   secondaryButton: {
     flex: 1,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: "#E5E7EB",
+    borderColor: colors.border,
     paddingVertical: 12,
     paddingHorizontal: 24,
     borderRadius: 8,
@@ -301,7 +301,7 @@ const styles = StyleSheet.create({
   },
 
   secondaryButtonText: {
-    color: "#374151",
+    color: colors.textSecondary,
     fontSize: 16,
     fontWeight: "600",
   },

@@ -1,11 +1,14 @@
 import { InventoryAlert } from "@/types/inventory";
 import { StyleSheet, Text, View } from "react-native";
+import { useThemeColors } from "@/context/ThemeContext";
 
 interface ProductItemProps {
   alert: InventoryAlert
 }
 
 export default function ProductItem({ alert }: ProductItemProps) {
+  const colors = useThemeColors();
+  const styles = createStyles(colors);
 
   // Format time display better
   const getTimeDisplay = () => {
@@ -35,14 +38,15 @@ export default function ProductItem({ alert }: ProductItemProps) {
   )
 }
 
-const styles = StyleSheet.create({
+// Dynamic styles based on theme colors
+const createStyles = (colors: any) => StyleSheet.create({
   activityItem: {
     flexDirection: 'row',
     alignItems: 'flex-start',
     paddingVertical: 14,
     paddingHorizontal: 2,
     borderBottomWidth: 1,
-    borderBottomColor: '#F3F4F6',
+    borderBottomColor: colors.borderLight,
   },
   activityDot: {
     width: 10,
@@ -50,7 +54,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     marginRight: 14,
     marginTop: 5,
-    shadowColor: '#000',
+    shadowColor: colors.shadow,
     shadowOpacity: 0.1,
     shadowOffset: { width: 0, height: 1 },
     shadowRadius: 2,
@@ -62,7 +66,7 @@ const styles = StyleSheet.create({
   activityTitle: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#111827',
+    color: colors.text,
     lineHeight: 20,
     marginBottom: 6,
   },
@@ -73,16 +77,16 @@ const styles = StyleSheet.create({
   productName: {
     fontSize: 13,
     fontWeight: '500',
-    color: '#374151',
+    color: colors.textSecondary,
   },
   separator: {
     fontSize: 12,
-    color: '#D1D5DB',
+    color: colors.border,
     marginHorizontal: 6,
   },
   activityTime: {
     fontSize: 12,
-    color: '#9CA3AF',
+    color: colors.textMuted,
     fontWeight: '500',
   },
 })

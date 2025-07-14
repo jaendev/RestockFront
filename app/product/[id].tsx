@@ -2,6 +2,7 @@ import { ProductForm } from "@/components/ProductForm";
 import { useProducts } from "@/hooks/useProducts";
 import { updateProduct, updateStock } from "@/services/productService";
 import { UpdateProductDto } from "@/types/product";
+import { useThemeColors } from "@/context/ThemeContext";
 import { router, useLocalSearchParams } from "expo-router";
 import {
   AlertTriangle,
@@ -13,7 +14,6 @@ import {
 import { useEffect, useState } from "react";
 import {
   Alert,
-  LogBox,
   ScrollView,
   StyleSheet,
   Text,
@@ -22,6 +22,7 @@ import {
 } from "react-native";
 
 export default function ProductDetailScreen() {
+  const colors = useThemeColors();
   const { id } = useLocalSearchParams<{ id: string }>();
   const productId = parseInt(id);
 
@@ -34,7 +35,7 @@ export default function ProductDetailScreen() {
     if (product) {
       setQuantity(product.currentStock);
     }
-  }, [product?.currentStock]);
+  }, [product]);
 
   const turnProucts = () => {
     router.push("/products");
@@ -70,6 +71,7 @@ export default function ProductDetailScreen() {
   };
 
   if (!product) {
+    const styles = createStyles(colors);
     return (
       <View style={styles.errorContainer}>
         <Text style={styles.errorText}>Producto no encontrado</Text>
@@ -83,6 +85,8 @@ export default function ProductDetailScreen() {
     );
   }
 
+  const styles = createStyles(colors);
+
   return (
     <View style={styles.container}>
       {/* Header */}
@@ -91,7 +95,7 @@ export default function ProductDetailScreen() {
           onPress={() => router.back()}
           style={styles.backButton}
         >
-          <ArrowLeft size={24} color="#111827" />
+          <ArrowLeft size={24} color={colors.text} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Detalle del Producto</Text>
         <Text>
@@ -99,7 +103,7 @@ export default function ProductDetailScreen() {
             onPress={() => turnProucts()}
             style={styles.backButton}
           >
-            <Package size={24} color="#111827" />
+            <Package size={24} color={colors.text} />
           </TouchableOpacity>
         </Text>
       </View>
@@ -110,7 +114,7 @@ export default function ProductDetailScreen() {
           {/* Product Header */}
           <View style={styles.productHeader}>
             <View style={styles.productIcon}>
-              <Package size={40} color="#2563EB" />
+              <Package size={40} color={colors.primary} />
             </View>
             <Text style={styles.productName}>{product.name}</Text>
             <Text style={styles.productDescription}>{product.description}</Text>
@@ -266,10 +270,11 @@ export default function ProductDetailScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+// Dynamic styles based on theme colors
+const createStyles = (colors: any) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F9FAFB",
+    backgroundColor: colors.background,
   },
   header: {
     flexDirection: "row",
@@ -278,34 +283,34 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingTop: 60,
     paddingBottom: 16,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.surface,
     borderBottomWidth: 1,
-    borderBottomColor: "#E5E7EB",
+    borderBottomColor: colors.border,
   },
   backButton: {
     padding: 8,
     borderRadius: 8,
-    backgroundColor: "#F3F4F6",
+    backgroundColor: colors.borderLight,
   },
   headerTitle: {
     fontSize: 18,
     fontWeight: "600",
-    color: "#111827",
+    color: colors.text,
   },
   editButton: {
     padding: 8,
     borderRadius: 8,
-    backgroundColor: "#F3F4F6",
+    backgroundColor: colors.borderLight,
   },
   content: {
     flex: 1,
   },
   productCard: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.surface,
     margin: 16,
     borderRadius: 16,
     padding: 20,
-    shadowColor: "#000",
+    shadowColor: colors.shadow,
     shadowOpacity: 0.05,
     shadowOffset: { width: 0, height: 2 },
     shadowRadius: 8,
@@ -319,7 +324,7 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: "#DBEAFE",
+    backgroundColor: colors.primaryLight,
     justifyContent: "center",
     alignItems: "center",
     marginBottom: 16,
@@ -327,25 +332,25 @@ const styles = StyleSheet.create({
   productName: {
     fontSize: 24,
     fontWeight: "700",
-    color: "#111827",
+    color: colors.text,
     textAlign: "center",
     marginBottom: 8,
   },
   productDescription: {
     fontSize: 16,
-    color: "#6B7280",
+    color: colors.textSecondary,
     textAlign: "center",
   },
   stockSection: {
     marginBottom: 24,
     paddingBottom: 24,
     borderBottomWidth: 1,
-    borderBottomColor: "#F3F4F6",
+    borderBottomColor: colors.borderLight,
   },
   sectionTitle: {
     fontSize: 18,
     fontWeight: "600",
-    color: "#111827",
+    color: colors.text,
     marginBottom: 16,
   },
   stockRow: {
@@ -359,7 +364,7 @@ const styles = StyleSheet.create({
   },
   stockLabel: {
     fontSize: 14,
-    color: "#6B7280",
+    color: colors.textSecondary,
     marginBottom: 4,
   },
   stockValue: {
@@ -374,7 +379,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: "#F3F4F6",
+    backgroundColor: colors.borderLight,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -385,12 +390,12 @@ const styles = StyleSheet.create({
   },
   minStockLabel: {
     fontSize: 14,
-    color: "#6B7280",
+    color: colors.textSecondary,
   },
   lowStockBadge: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#FEF3C7",
+    backgroundColor: colors.warningLight,
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 12,
@@ -398,7 +403,7 @@ const styles = StyleSheet.create({
   },
   lowStockText: {
     fontSize: 12,
-    color: "#F59E0B",
+    color: colors.warning,
     fontWeight: "500",
   },
   infoSection: {
@@ -412,12 +417,12 @@ const styles = StyleSheet.create({
   },
   infoLabel: {
     fontSize: 16,
-    color: "#374151",
+    color: colors.textSecondary,
   },
   infoValue: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#111827",
+    color: colors.text,
   },
   categoryBadge: {
     paddingHorizontal: 12,
@@ -436,26 +441,26 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   primaryButton: {
-    backgroundColor: "#2563EB",
+    backgroundColor: colors.primary,
     paddingVertical: 16,
     borderRadius: 12,
     alignItems: "center",
   },
   primaryButtonText: {
-    color: "#FFFFFF",
+    color: colors.surface,
     fontSize: 16,
     fontWeight: "600",
   },
   secondaryButton: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: "#E5E7EB",
+    borderColor: colors.border,
     paddingVertical: 16,
     borderRadius: 12,
     alignItems: "center",
   },
   secondaryButtonText: {
-    color: "#374151",
+    color: colors.textSecondary,
     fontSize: 16,
     fontWeight: "600",
   },
@@ -467,18 +472,18 @@ const styles = StyleSheet.create({
   },
   errorText: {
     fontSize: 18,
-    color: "#DC2626",
+    color: colors.error,
     marginBottom: 16,
     textAlign: "center",
   },
   errorButton: {
-    backgroundColor: "#2563EB",
+    backgroundColor: colors.primary,
     paddingHorizontal: 24,
     paddingVertical: 12,
     borderRadius: 8,
   },
   errorButtonText: {
-    color: "#FFFFFF",
+    color: colors.surface,
     fontWeight: "600",
   },
 });

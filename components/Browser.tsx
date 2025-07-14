@@ -1,5 +1,6 @@
-import { Filter, Search } from "lucide-react-native";
-import { TextInput, TouchableOpacity, View, StyleSheet } from "react-native";
+import { Search } from "lucide-react-native";
+import { TextInput, View, StyleSheet } from "react-native";
+import { useThemeColors } from "@/context/ThemeContext";
 
 interface BrowserProps {
   searchTerm: string;
@@ -16,14 +17,17 @@ export function Browser({
   placeholder,
   onShowFilterChange,
 }: BrowserProps) {
+  const colors = useThemeColors();
+  const styles = createStyles(colors);
+
   return (
     <View style={styles.searchContainer}>
       <View style={styles.searchInputContainer}>
-        <Search size={18} color="#6B7280" />
+        <Search size={18} color={colors.icon} />
         <TextInput
           style={styles.searchInput}
           placeholder={placeholder}
-          placeholderTextColor="#9CA3AF"
+          placeholderTextColor={colors.placeholder}
           value={searchTerm}
           onChangeText={onSearchChange}
         />
@@ -32,19 +36,20 @@ export function Browser({
   );
 }
 
-const styles = StyleSheet.create({
+// Dynamic styles based on theme colors
+const createStyles = (colors: any) => StyleSheet.create({
   searchContainer: {
     flexDirection: "row",
     paddingHorizontal: 16,
     paddingVertical: 12,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.surface,
     gap: 12,
   },
   searchInputContainer: {
     flex: 1,
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#F3F4F6",
+    backgroundColor: colors.borderLight,
     borderRadius: 12,
     paddingHorizontal: 12,
     paddingVertical: 10,
@@ -53,14 +58,14 @@ const styles = StyleSheet.create({
   searchInput: {
     flex: 1,
     fontSize: 16,
-    color: "#111827",
+    color: colors.text,
   },
   filterButton: {
     width: 44,
     height: 44,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#F3F4F6",
+    backgroundColor: colors.borderLight,
     borderRadius: 12,
   },
 });

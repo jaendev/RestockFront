@@ -3,13 +3,16 @@ import { InventoryAlert } from "@/types/inventory";
 import { AlertTriangle, Package } from "lucide-react-native";
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
+import { useThemeColors } from "@/context/ThemeContext";
 
 interface AlertItemProps {
   alert: InventoryAlert
 }
 
 export default function AlertItem({ alert }: AlertItemProps) {
+  const colors = useThemeColors();
   const { product, loading } = useProducts(alert.productId);
+  const styles = createStyles(colors);
 
   // Validate data
   if (!alert || !alert.productName || !alert.id) {
@@ -25,7 +28,7 @@ export default function AlertItem({ alert }: AlertItemProps) {
   if (loading) {
     return (
       <View style={styles.alertItem}>
-        <AlertTriangle size={16} color="#F59E0B" />
+        <AlertTriangle size={16} color={colors.warning} />
         <Text style={styles.alertText}>
           {alert.productName} - Cargando...
         </Text>
@@ -56,18 +59,18 @@ export default function AlertItem({ alert }: AlertItemProps) {
   // Get appropriate icon and color based on stock level
   const getAlertStyle = () => {
     if (!product) {
-      return { color: '#6B7280', icon: Package };
+      return { color: colors.textSecondary, icon: Package };
     }
 
     const currentStock = product.currentStock;
     const minimumStock = product.minimumStock;
 
     if (currentStock === 0) {
-      return { color: '#EF4444', icon: AlertTriangle }; // Red for out of stock
+      return { color: colors.error, icon: AlertTriangle }; // Red for out of stock
     } else if (currentStock <= minimumStock / 2) {
-      return { color: '#DC2626', icon: AlertTriangle }; // Dark red for critical
+      return { color: colors.errorLight, icon: AlertTriangle }; // Dark red for critical
     } else {
-      return { color: '#F59E0B', icon: AlertTriangle }; // Orange for low stock
+      return { color: colors.warning, icon: AlertTriangle }; // Orange for low stock
     }
   };
 
@@ -89,14 +92,15 @@ export default function AlertItem({ alert }: AlertItemProps) {
   );
 }
 
-const styles = StyleSheet.create({
+// Dynamic styles based on theme colors
+const createStyles = (colors: any) => StyleSheet.create({
   alertItem: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: 12,
     gap: 12,
     borderBottomWidth: 1,
-    borderBottomColor: '#F3F4F6',
+    borderBottomColor: colors.borderLight,
   },
   alertContent: {
     flex: 1,
@@ -104,16 +108,16 @@ const styles = StyleSheet.create({
   alertTitle: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#111827',
+    color: colors.text,
     marginBottom: 2,
   },
   alertText: {
     fontSize: 12,
-    color: '#6B7280',
+    color: colors.textSecondary,
   },
   timeAgo: {
     fontSize: 11,
-    color: '#9CA3AF',
+    color: colors.textMuted,
     fontWeight: '500',
   },
 });

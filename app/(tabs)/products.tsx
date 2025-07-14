@@ -1,12 +1,12 @@
 import { Browser } from "@/components/Browser";
 import { useProducts } from "@/hooks/useProducts";
 import { useProductSearch } from "@/hooks/useProductSearch";
+import { useThemeColors } from "@/context/ThemeContext";
 import { router } from "expo-router";
 import { Package, Plus } from "lucide-react-native";
 import { DropdownFilter } from "@/components/DropdownFilter";
 import { useState } from "react";
 import {
-  LogBox,
   ScrollView,
   StyleSheet,
   Text,
@@ -18,6 +18,7 @@ import { ProductForm } from "@/components/ProductForm";
 import { createProduct } from "@/services/productService";
 
 export default function ProductsScreen() {
+  const colors = useThemeColors();
   const { products, refetch } = useProducts();
   const { searchTerm, setSearchTerm, filteredProducts } = useProductSearch(
     products || [],
@@ -77,6 +78,8 @@ export default function ProductsScreen() {
         return "#D1FAE5";
     }
   };
+
+  const styles = createStyles(colors);
 
   return (
     <View style={styles.container}>
@@ -178,10 +181,11 @@ export default function ProductsScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+// Dynamic styles based on theme colors
+const createStyles = (colors: any) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F9FAFB",
+    backgroundColor: colors.background,
   },
   header: {
     flexDirection: "row",
@@ -190,20 +194,20 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingTop: 60,
     paddingBottom: 16,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.surface,
     borderBottomWidth: 1,
-    borderBottomColor: "#E5E7EB",
+    borderBottomColor: colors.border,
   },
   title: {
     fontSize: 28,
     fontWeight: "700",
-    color: "#111827",
+    color: colors.text,
   },
   addButton: {
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: "#2563EB",
+    backgroundColor: colors.primary,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -211,14 +215,14 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     paddingHorizontal: 16,
     paddingVertical: 12,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.surface,
     gap: 12,
   },
   searchInputContainer: {
     flex: 1,
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#F3F4F6",
+    backgroundColor: colors.borderLight,
     borderRadius: 12,
     paddingHorizontal: 12,
     paddingVertical: 10,
@@ -227,14 +231,14 @@ const styles = StyleSheet.create({
   searchInput: {
     flex: 1,
     fontSize: 16,
-    color: "#111827",
+    color: colors.text,
   },
   filterButton: {
     width: 44,
     height: 44,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#F3F4F6",
+    backgroundColor: colors.borderLight,
     borderRadius: 12,
   },
   content: {
@@ -246,11 +250,11 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
   },
   productCard: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.surface,
     borderRadius: 12,
     padding: 16,
     marginBottom: 12,
-    shadowColor: "#000",
+    shadowColor: colors.shadow,
     shadowOpacity: 0.05,
     shadowOffset: { width: 0, height: 2 },
     shadowRadius: 8,
@@ -265,7 +269,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: "#DBEAFE",
+    backgroundColor: colors.primaryLight,
     justifyContent: "center",
     alignItems: "center",
     marginRight: 12,
@@ -276,12 +280,12 @@ const styles = StyleSheet.create({
   productName: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#111827",
+    color: colors.text,
     marginBottom: 2,
   },
   productCategory: {
     fontSize: 12,
-    color: "#6B7280",
+    color: colors.textSecondary,
   },
   statusBadge: {
     paddingHorizontal: 8,
@@ -301,38 +305,38 @@ const styles = StyleSheet.create({
   },
   quantityLabel: {
     fontSize: 12,
-    color: "#6B7280",
+    color: colors.textSecondary,
     marginBottom: 4,
   },
   quantityValue: {
     fontSize: 18,
     fontWeight: "700",
-    color: "#111827",
+    color: colors.text,
   },
   minStockContainer: {
     alignItems: "center",
   },
   minStockLabel: {
     fontSize: 12,
-    color: "#6B7280",
+    color: colors.textSecondary,
     marginBottom: 4,
   },
   minStockValue: {
     fontSize: 18,
     fontWeight: "700",
-    color: "#6B7280",
+    color: colors.textSecondary,
   },
   filtersContainer: {
     flexDirection: "row",
     paddingHorizontal: 16,
     paddingVertical: 12,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.surface,
     gap: 12,
     alignItems: "center",
   },
   filterDropdown: {
-    backgroundColor: "#2563EB",
-    borderColor: "#1D4ED8",
+    backgroundColor: colors.primary,
+    borderColor: colors.primaryDark,
   },
   emptyState: {
     flex: 1,
@@ -344,26 +348,26 @@ const styles = StyleSheet.create({
   emptyStateTitle: {
     fontSize: 18,
     fontWeight: "600",
-    color: "#374151",
+    color: colors.textSecondary,
     marginTop: 16,
     marginBottom: 8,
     textAlign: "center",
   },
   emptyStateText: {
     fontSize: 14,
-    color: "#9CA3AF",
+    color: colors.textMuted,
     textAlign: "center",
     lineHeight: 20,
     marginBottom: 24,
   },
   emptyStateButton: {
-    backgroundColor: "#2563EB",
+    backgroundColor: colors.primary,
     paddingHorizontal: 24,
     paddingVertical: 12,
     borderRadius: 8,
   },
   emptyStateButtonText: {
-    color: "#FFFFFF",
+    color: colors.surface,
     fontSize: 14,
     fontWeight: "600",
   },

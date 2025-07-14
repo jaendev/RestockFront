@@ -1,6 +1,7 @@
 import { RequestOptions } from "@/types/api";
+import Constants from 'expo-constants';
 
-const API_BASE_URL = process.env.API_BASE_URL ?? "http://localhost:5000/api";
+const API_BASE_URL = Constants.expoConfig?.extra?.apiBaseUrl ?? "http://localhost:5000/api";
 
 const defaultHeaders = {
   "Content-Type": "application/json",

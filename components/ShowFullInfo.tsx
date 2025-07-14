@@ -3,6 +3,7 @@ import { useAlert } from "@/hooks/useAlert"
 import { X } from "lucide-react-native"
 import React from "react"
 import { Modal, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native"
+import { useThemeColors } from "@/context/ThemeContext"
 import AlertItem from "./AlertItem"
 import ProductItem from "./ProductItem"
 
@@ -15,8 +16,10 @@ interface ShowFullInfoProps {
 }
 
 export default function ShowFullInfo({ label, showFullInfo, showFullInfoVoid, title, type = 0 }: ShowFullInfoProps) {
+  const colors = useThemeColors();
   const { alerts } = useAlert()
   const { ProductType } = ViewSelector
+  const styles = createStyles(colors);
 
   return (
     <>
@@ -35,9 +38,7 @@ export default function ShowFullInfo({ label, showFullInfo, showFullInfoVoid, ti
             <View style={styles.modalHeader}>
               <Text style={styles.modalTitle}>{title}</Text>
               <TouchableOpacity onPress={() => showFullInfoVoid()}>
-                <Text style={{ fontSize: 24, color: '#6B7280' }}>
-                  <X />
-                </Text>
+                <X size={24} color={colors.textSecondary} />
               </TouchableOpacity>
             </View>
 
@@ -59,27 +60,28 @@ export default function ShowFullInfo({ label, showFullInfo, showFullInfoVoid, ti
   )
 }
 
-const styles = StyleSheet.create({
+// Dynamic styles based on theme colors
+const createStyles = (colors: any) => StyleSheet.create({
   viewMoreBtn: {
     marginTop: 5,
     alignItems: 'center',
   },
   viewMoreText: {
-    color: '#2563EB',
+    color: colors.primary,
   },
   modalOverlay: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Fondo semi-transparente
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent background
   },
   modalContent: {
     height: '60%',
     width: '90%',
     maxWidth: 400,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.surface,
     borderRadius: 12,
-    shadowColor: '#000',
+    shadowColor: colors.shadow,
     shadowOpacity: 0.25,
     shadowOffset: { width: 0, height: 2 },
     shadowRadius: 8,
@@ -93,23 +95,19 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#E5E7EB',
+    borderBottomColor: colors.border,
   },
-
   modalTitle: {
     fontSize: 18,
     fontWeight: '700',
-    color: '#111827',
+    color: colors.text,
   },
-
   modalSubtitle: {
     fontSize: 14,
-    color: '#FFFFFF',
+    color: colors.surface,
     marginTop: 2,
   },
-
   closeButton: {
     padding: 4,
   },
-
 })

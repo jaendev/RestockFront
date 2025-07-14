@@ -1,8 +1,12 @@
 import { ProductForm } from "@/components/ProductForm";
+import { CategoryForm } from "@/components/CategoryForm";
 import { useCategories } from "@/hooks/useCategories";
 import { useProducts } from "@/hooks/useProducts";
 import { createProduct } from "@/services/productService";
+import { updateCategory } from "@/services/categoryService";
 import { CreateProductDto } from "@/types/product";
+import { UpdateCategoryDto } from "@/types/category";
+import { useThemeColors } from "@/context/ThemeContext";
 import { router, useLocalSearchParams } from "expo-router";
 import {
   AlertTriangle,
@@ -23,10 +27,12 @@ import {
 } from "react-native";
 
 export default function CategoryDetailScreen() {
+  const colors = useThemeColors();
   const { id } = useLocalSearchParams<{ id: string }>();
 
   const [showInactiveProducts, setShowInactiveProducts] = useState(false);
   const [showCreateForm, setShowCreateForm] = useState(false);
+  const [showEditForm, setShowEditForm] = useState(false);
 
   const { categories } = useCategories();
   const { products, refetch } = useProducts();
@@ -49,7 +55,25 @@ export default function CategoryDetailScreen() {
     }
   };
 
+  const handleUpdateCategory = async (
+    categoryId: number,
+    categoryData: UpdateCategoryDto,
+  ) => {
+    try {
+      console.log("🔄 Updating category:", categoryId, categoryData);
+      await updateCategory(categoryId, categoryData);
+      console.log("✅ Category updated successfully");
+      // Refresh categories to get updated data
+      // Note: We might need to refresh the specific category data here
+      // since we're getting it from the categories list
+    } catch (error) {
+      console.error("❌ Error updating category:", error);
+      throw error;
+    }
+  };
+
   if (!category) {
+    const styles = createStyles(colors);
     return (
       <View style={styles.errorContainer}>
         <Text style={styles.errorText}>Categoría no encontrada</Text>
@@ -64,13 +88,14 @@ export default function CategoryDetailScreen() {
   }
 
   const activeProducts = categoryProducts?.filter((p) => p.isActive) || [];
-  const inactiveProducts = categoryProducts?.filter((p) => !p.isActive) || [];
   const lowStockProducts = activeProducts.filter((p) => p.isLowStock);
   const outOfStockProducts = activeProducts.filter((p) => p.isOutOfStock);
 
   const displayProducts = showInactiveProducts
     ? categoryProducts
     : activeProducts;
+
+  const styles = createStyles(colors);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -106,7 +131,7 @@ export default function CategoryDetailScreen() {
           onPress={() => router.back()}
           style={styles.backButton}
         >
-          <ArrowLeft size={24} color="#111827" />
+          <ArrowLeft size={24} color={colors.text} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Detalle de Categoría</Text>
         <Text>
@@ -114,7 +139,7 @@ export default function CategoryDetailScreen() {
             onPress={() => turnCategories()}
             style={styles.backButton}
           >
-            <FolderOpen size={24} color="#111827" />
+            <FolderOpen size={24} color={colors.text} />
           </TouchableOpacity>
         </Text>
       </View>
@@ -320,7 +345,10 @@ export default function CategoryDetailScreen() {
 
           {/* Action Buttons */}
           <View style={styles.actionSection}>
-            <TouchableOpacity style={styles.primaryButton}>
+            <TouchableOpacity 
+              style={styles.primaryButton}
+              onPress={() => setShowEditForm(true)}
+            >
               <Text style={styles.primaryButtonText}>Editar Categoría</Text>
             </TouchableOpacity>
 
@@ -337,6 +365,14 @@ export default function CategoryDetailScreen() {
               onSubmit={handleCreateProduct}
               currentCategoryId={categoryId}
             />
+
+            <CategoryForm
+              visible={showEditForm}
+              onClose={() => setShowEditForm(false)}
+              editCategory={category}
+              onUpdate={handleUpdateCategory}
+              onSubmit={() => Promise.resolve()}
+            />
           </View>
         </View>
       </ScrollView>
@@ -344,10 +380,11 @@ export default function CategoryDetailScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+// Dynamic styles based on theme colors
+const createStyles = (colors: any) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F9FAFB",
+    backgroundColor: colors.background,
   },
   header: {
     flexDirection: "row",
@@ -356,34 +393,34 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingTop: 60,
     paddingBottom: 16,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.surface,
     borderBottomWidth: 1,
-    borderBottomColor: "#E5E7EB",
+    borderBottomColor: colors.border,
   },
   backButton: {
     padding: 8,
     borderRadius: 8,
-    backgroundColor: "#F3F4F6",
+    backgroundColor: colors.borderLight,
   },
   headerTitle: {
     fontSize: 18,
     fontWeight: "600",
-    color: "#111827",
+    color: colors.text,
   },
   editButton: {
     padding: 8,
     borderRadius: 8,
-    backgroundColor: "#F3F4F6",
+    backgroundColor: colors.borderLight,
   },
   content: {
     flex: 1,
   },
   categoryCard: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.surface,
     margin: 16,
     borderRadius: 16,
     padding: 20,
-    shadowColor: "#000",
+    shadowColor: colors.shadow,
     shadowOpacity: 0.05,
     shadowOffset: { width: 0, height: 2 },
     shadowRadius: 8,
@@ -404,25 +441,25 @@ const styles = StyleSheet.create({
   categoryName: {
     fontSize: 24,
     fontWeight: "700",
-    color: "#111827",
+    color: colors.text,
     textAlign: "center",
     marginBottom: 8,
   },
   categoryDescription: {
     fontSize: 16,
-    color: "#6B7280",
+    color: colors.textSecondary,
     textAlign: "center",
   },
   statsSection: {
     marginBottom: 24,
     paddingBottom: 24,
     borderBottomWidth: 1,
-    borderBottomColor: "#F3F4F6",
+    borderBottomColor: colors.borderLight,
   },
   sectionTitle: {
     fontSize: 18,
     fontWeight: "600",
-    color: "#111827",
+    color: colors.text,
     marginBottom: 16,
   },
   statsGrid: {
@@ -434,7 +471,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     padding: 12,
-    backgroundColor: "#F9FAFB",
+    backgroundColor: colors.borderLight,
     borderRadius: 12,
     marginHorizontal: 4,
   },
@@ -442,7 +479,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: "#DBEAFE",
+    backgroundColor: colors.primaryLight,
     justifyContent: "center",
     alignItems: "center",
     marginBottom: 8,
@@ -450,12 +487,12 @@ const styles = StyleSheet.create({
   statNumber: {
     fontSize: 18,
     fontWeight: "700",
-    color: "#111827",
+    color: colors.text,
     marginBottom: 4,
   },
   statLabel: {
     fontSize: 11,
-    color: "#6B7280",
+    color: colors.textSecondary,
     textAlign: "center",
   },
   detailedStats: {
@@ -469,12 +506,12 @@ const styles = StyleSheet.create({
   },
   statRowLabel: {
     fontSize: 14,
-    color: "#6B7280",
+    color: colors.textSecondary,
   },
   statRowValue: {
     fontSize: 14,
     fontWeight: "600",
-    color: "#111827",
+    color: colors.text,
   },
   productsSection: {
     marginBottom: 24,
@@ -491,12 +528,12 @@ const styles = StyleSheet.create({
     gap: 6,
     paddingHorizontal: 12,
     paddingVertical: 6,
-    backgroundColor: "#F3F4F6",
+    backgroundColor: colors.borderLight,
     borderRadius: 8,
   },
   toggleButtonText: {
     fontSize: 12,
-    color: "#6B7280",
+    color: colors.textSecondary,
     fontWeight: "500",
   },
   productsContainer: {
@@ -508,19 +545,19 @@ const styles = StyleSheet.create({
   },
   emptyStateText: {
     fontSize: 16,
-    color: "#9CA3AF",
+    color: colors.textMuted,
     marginTop: 12,
   },
   productCard: {
-    backgroundColor: "#F9FAFB",
+    backgroundColor: colors.borderLight,
     borderRadius: 12,
     padding: 16,
     borderWidth: 1,
-    borderColor: "#E5E7EB",
+    borderColor: colors.border,
   },
   inactiveProductCard: {
     opacity: 0.6,
-    backgroundColor: "#F3F4F6",
+    backgroundColor: colors.borderLight,
   },
   productHeader: {
     flexDirection: "row",
@@ -531,7 +568,7 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: "#DBEAFE",
+    backgroundColor: colors.primaryLight,
     justifyContent: "center",
     alignItems: "center",
     marginRight: 12,
@@ -542,15 +579,15 @@ const styles = StyleSheet.create({
   productName: {
     fontSize: 14,
     fontWeight: "600",
-    color: "#111827",
+    color: colors.text,
     marginBottom: 2,
   },
   inactiveText: {
-    color: "#9CA3AF",
+    color: colors.textMuted,
   },
   productPrice: {
     fontSize: 12,
-    color: "#6B7280",
+    color: colors.textSecondary,
     fontWeight: "500",
   },
   productStatus: {
@@ -574,38 +611,38 @@ const styles = StyleSheet.create({
   },
   productDetailLabel: {
     fontSize: 11,
-    color: "#9CA3AF",
+    color: colors.textMuted,
     marginBottom: 4,
   },
   productDetailValue: {
     fontSize: 14,
     fontWeight: "600",
-    color: "#111827",
+    color: colors.text,
   },
   actionSection: {
     gap: 12,
   },
   primaryButton: {
-    backgroundColor: "#2563EB",
+    backgroundColor: colors.primary,
     paddingVertical: 16,
     borderRadius: 12,
     alignItems: "center",
   },
   primaryButtonText: {
-    color: "#FFFFFF",
+    color: colors.surface,
     fontSize: 16,
     fontWeight: "600",
   },
   secondaryButton: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: "#E5E7EB",
+    borderColor: colors.border,
     paddingVertical: 16,
     borderRadius: 12,
     alignItems: "center",
   },
   secondaryButtonText: {
-    color: "#374151",
+    color: colors.textSecondary,
     fontSize: 16,
     fontWeight: "600",
   },
@@ -617,18 +654,18 @@ const styles = StyleSheet.create({
   },
   errorText: {
     fontSize: 18,
-    color: "#DC2626",
+    color: colors.error,
     marginBottom: 16,
     textAlign: "center",
   },
   errorButton: {
-    backgroundColor: "#2563EB",
+    backgroundColor: colors.primary,
     paddingHorizontal: 24,
     paddingVertical: 12,
     borderRadius: 8,
   },
   errorButtonText: {
-    color: "#FFFFFF",
+    color: colors.surface,
     fontWeight: "600",
   },
 });

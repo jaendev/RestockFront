@@ -17,6 +17,7 @@ import {
   Palette,
 } from "lucide-react-native";
 import { Category, CreateCategoryRequest, UpdateCategoryDto } from "@/types/category";
+import { useThemeColors } from "@/context/ThemeContext";
 
 interface CategoryFormProps {
   visible: boolean;
@@ -49,6 +50,7 @@ export function CategoryForm({
   onSubmit,
   onUpdate,
 }: CategoryFormProps) {
+  const colors = useThemeColors();
   const isEditMode = !!editCategory;
 
   const [loading, setLoading] = useState(false);
@@ -139,7 +141,9 @@ export function CategoryForm({
           color: formData.color,
           isActive: editCategory.isActive, // Keep current active state
         };
+        console.log("🔄 Updating category with data:", updateData);
         await onUpdate(editCategory.id, updateData);
+        console.log("✅ Category updated successfully");
         Alert.alert("Éxito", "Categoría actualizada correctamente");
       } else {
         // Create mode
@@ -163,6 +167,8 @@ export function CategoryForm({
     }
   };
 
+  const styles = createStyles(colors);
+
   return (
     <Modal
       visible={visible}
@@ -177,7 +183,7 @@ export function CategoryForm({
         {/* Header */}
         <View style={styles.header}>
           <TouchableOpacity onPress={onClose} style={styles.closeButton}>
-            <X size={24} color="#374151" />
+            <X size={24} color={colors.text} />
           </TouchableOpacity>
           <Text style={styles.headerTitle}>
             {isEditMode ? "Editar Categoría" : "Nueva Categoría"}
@@ -355,10 +361,11 @@ export function CategoryForm({
   );
 }
 
-const styles = StyleSheet.create({
+// Dynamic styles based on theme colors
+const createStyles = (colors: any) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F9FAFB",
+    backgroundColor: colors.background,
   },
   header: {
     flexDirection: "row",
@@ -367,19 +374,19 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingTop: 60,
     paddingBottom: 16,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.surface,
     borderBottomWidth: 1,
-    borderBottomColor: "#E5E7EB",
+    borderBottomColor: colors.border,
   },
   closeButton: {
     padding: 8,
     borderRadius: 8,
-    backgroundColor: "#F3F4F6",
+    backgroundColor: colors.borderLight,
   },
   headerTitle: {
     fontSize: 18,
     fontWeight: "600",
-    color: "#111827",
+    color: colors.text,
   },
   placeholder: {
     width: 40,
@@ -402,7 +409,7 @@ const styles = StyleSheet.create({
   },
   iconText: {
     fontSize: 14,
-    color: "#6B7280",
+    color: colors.textSecondary,
     fontWeight: "500",
   },
   section: {
@@ -411,7 +418,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: "600",
-    color: "#111827",
+    color: colors.text,
     marginBottom: 16,
   },
   fieldContainer: {
@@ -420,35 +427,35 @@ const styles = StyleSheet.create({
   fieldLabel: {
     fontSize: 14,
     fontWeight: "500",
-    color: "#374151",
+    color: colors.textSecondary,
     marginBottom: 8,
   },
   required: {
-    color: "#EF4444",
+    color: colors.error,
   },
   input: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.inputBackground,
     borderRadius: 12,
     paddingHorizontal: 16,
     paddingVertical: 12,
     fontSize: 16,
-    color: "#111827",
+    color: colors.text,
     borderWidth: 1,
-    borderColor: "#E5E7EB",
+    borderColor: colors.inputBorder,
   },
   inputError: {
-    borderColor: "#EF4444",
-    backgroundColor: "#FEF2F2",
+    borderColor: colors.error,
+    backgroundColor: colors.errorLight,
   },
   textArea: {
     height: 80,
     textAlignVertical: "top",
   },
   colorPaletteContainer: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.inputBackground,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: "#E5E7EB",
+    borderColor: colors.inputBorder,
     padding: 16,
   },
   selectedColorDisplay: {
@@ -457,7 +464,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     paddingBottom: 12,
     borderBottomWidth: 1,
-    borderBottomColor: "#F3F4F6",
+    borderBottomColor: colors.borderLight,
   },
   paletteIcon: {
     marginRight: 8,
@@ -468,8 +475,8 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginRight: 8,
     borderWidth: 2,
-    borderColor: "#FFFFFF",
-    shadowColor: "#000",
+    borderColor: colors.surface,
+    shadowColor: colors.shadow,
     shadowOpacity: 0.1,
     shadowOffset: { width: 0, height: 1 },
     shadowRadius: 2,
@@ -477,7 +484,7 @@ const styles = StyleSheet.create({
   },
   selectedColorText: {
     fontSize: 14,
-    color: "#374151",
+    color: colors.textSecondary,
     fontWeight: "500",
   },
   colorGrid: {
@@ -491,7 +498,7 @@ const styles = StyleSheet.create({
     borderRadius: 22,
     justifyContent: "center",
     alignItems: "center",
-    shadowColor: "#000",
+    shadowColor: colors.shadow,
     shadowOpacity: 0.1,
     shadowOffset: { width: 0, height: 2 },
     shadowRadius: 4,
@@ -499,7 +506,7 @@ const styles = StyleSheet.create({
   },
   colorOptionSelected: {
     borderWidth: 3,
-    borderColor: "#FFFFFF",
+    borderColor: colors.surface,
     shadowOpacity: 0.2,
     shadowRadius: 6,
     elevation: 5,
@@ -509,7 +516,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   checkmarkText: {
-    color: "#FFFFFF",
+    color: colors.surface,
     fontSize: 16,
     fontWeight: "bold",
     textShadowColor: "rgba(0,0,0,0.3)",
@@ -520,12 +527,12 @@ const styles = StyleSheet.create({
     marginBottom: 32,
   },
   previewCard: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.surface,
     borderRadius: 12,
     padding: 16,
     borderWidth: 1,
-    borderColor: "#E5E7EB",
-    shadowColor: "#000",
+    borderColor: colors.border,
+    shadowColor: colors.shadow,
     shadowOpacity: 0.05,
     shadowOffset: { width: 0, height: 2 },
     shadowRadius: 8,
@@ -550,12 +557,12 @@ const styles = StyleSheet.create({
   previewName: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#111827",
+    color: colors.text,
     marginBottom: 2,
   },
   previewDescription: {
     fontSize: 12,
-    color: "#6B7280",
+    color: colors.textSecondary,
   },
   previewColorDot: {
     width: 16,
@@ -567,40 +574,40 @@ const styles = StyleSheet.create({
     justifyContent: "space-around",
     paddingTop: 16,
     borderTopWidth: 1,
-    borderTopColor: "#F3F4F6",
+    borderTopColor: colors.borderLight,
   },
   previewStatItem: {
     alignItems: "center",
   },
   previewStatLabel: {
     fontSize: 12,
-    color: "#6B7280",
+    color: colors.textSecondary,
     marginBottom: 4,
   },
   previewStatValue: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#111827",
+    color: colors.text,
   },
   errorText: {
     fontSize: 12,
-    color: "#EF4444",
+    color: colors.error,
     marginTop: 4,
   },
   footer: {
     flexDirection: "row",
     paddingHorizontal: 20,
     paddingVertical: 16,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.surface,
     borderTopWidth: 1,
-    borderTopColor: "#E5E7EB",
+    borderTopColor: colors.border,
     gap: 12,
   },
   cancelButton: {
     flex: 1,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: "#E5E7EB",
+    borderColor: colors.border,
     paddingVertical: 16,
     borderRadius: 12,
     alignItems: "center",
@@ -608,21 +615,21 @@ const styles = StyleSheet.create({
   cancelButtonText: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#374151",
+    color: colors.textSecondary,
   },
   submitButton: {
     flex: 1,
-    backgroundColor: "#2563EB",
+    backgroundColor: colors.primary,
     paddingVertical: 16,
     borderRadius: 12,
     alignItems: "center",
   },
   submitButtonDisabled: {
-    backgroundColor: "#9CA3AF",
+    backgroundColor: colors.textMuted,
   },
   submitButtonText: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#FFFFFF",
+    color: colors.surface,
   },
 });

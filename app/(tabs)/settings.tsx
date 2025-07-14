@@ -1,11 +1,19 @@
 import { Bell, ChevronRight, Database, CircleHelp as HelpCircle, Info, Moon, Shield, Smartphone, User } from 'lucide-react-native';
 import { useState } from 'react';
 import { ScrollView, StyleSheet, Switch, Text, TouchableOpacity, View } from 'react-native';
+import { useTheme, useThemeColors } from '@/context/ThemeContext';
 
 export default function SettingsScreen() {
+  const { isDark, setThemeMode } = useTheme();
+  const colors = useThemeColors();
+  
   const [notifications, setNotifications] = useState(true);
   const [lowStockAlerts, setLowStockAlerts] = useState(true);
-  const [darkMode, setDarkMode] = useState(false);
+
+  // Handle dark mode toggle
+  const handleDarkModeToggle = (value: boolean) => {
+    setThemeMode(value ? 'dark' : 'light');
+  };
 
   const settingsGroups = [
     {
@@ -19,7 +27,7 @@ export default function SettingsScreen() {
     {
       title: 'Preferencias',
       items: [
-        { id: 'darkmode', label: 'Modo oscuro', icon: Moon, hasToggle: true, value: darkMode, onToggle: setDarkMode },
+        { id: 'darkmode', label: 'Modo oscuro', icon: Moon, hasToggle: true, value: isDark, onToggle: handleDarkModeToggle },
         { id: 'privacy', label: 'Privacidad y Seguridad', icon: Shield, hasToggle: false },
       ],
     },
@@ -37,6 +45,8 @@ export default function SettingsScreen() {
       ],
     },
   ];
+
+  const styles = createStyles(colors);
 
   return (
     <View style={styles.container}>
@@ -75,7 +85,7 @@ export default function SettingsScreen() {
                 >
                   <View style={styles.settingContent}>
                     <View style={styles.settingIcon}>
-                      <item.icon size={20} color="#6B7280" />
+                      <item.icon size={20} color={colors.icon} />
                     </View>
                     <Text style={styles.settingLabel}>{item.label}</Text>
                   </View>
@@ -83,11 +93,11 @@ export default function SettingsScreen() {
                     <Switch
                       value={item.value}
                       onValueChange={item.onToggle}
-                      trackColor={{ false: '#E5E7EB', true: '#DBEAFE' }}
-                      thumbColor={item.value ? '#2563EB' : '#FFFFFF'}
+                      trackColor={{ false: colors.border, true: colors.primaryLight }}
+                      thumbColor={item.value ? colors.primary : colors.surface}
                     />
                   ) : (
-                    <ChevronRight size={20} color="#9CA3AF" />
+                    <ChevronRight size={20} color={colors.textMuted} />
                   )}
                 </TouchableOpacity>
               ))}
@@ -104,23 +114,24 @@ export default function SettingsScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+// Dynamic styles based on theme colors
+const createStyles = (colors: any) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F9FAFB',
+    backgroundColor: colors.background,
   },
   header: {
     paddingHorizontal: 16,
     paddingTop: 60,
     paddingBottom: 16,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.surface,
     borderBottomWidth: 1,
-    borderBottomColor: '#E5E7EB',
+    borderBottomColor: colors.border,
   },
   title: {
     fontSize: 28,
     fontWeight: '700',
-    color: '#111827',
+    color: colors.text,
   },
   content: {
     flex: 1,
@@ -131,12 +142,12 @@ const styles = StyleSheet.create({
     marginBottom: 32,
   },
   profileCard: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.surface,
     borderRadius: 12,
     padding: 20,
     flexDirection: 'row',
     alignItems: 'center',
-    shadowColor: '#000',
+    shadowColor: colors.shadow,
     shadowOpacity: 0.05,
     shadowOffset: { width: 0, height: 2 },
     shadowRadius: 8,
@@ -146,7 +157,7 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     borderRadius: 30,
-    backgroundColor: '#2563EB',
+    backgroundColor: colors.primary,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 16,
@@ -157,15 +168,15 @@ const styles = StyleSheet.create({
   profileName: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#111827',
+    color: colors.text,
     marginBottom: 2,
   },
   profileEmail: {
     fontSize: 14,
-    color: '#6B7280',
+    color: colors.textSecondary,
   },
   editButton: {
-    backgroundColor: '#F3F4F6',
+    backgroundColor: colors.borderLight,
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 8,
@@ -173,7 +184,7 @@ const styles = StyleSheet.create({
   editButtonText: {
     fontSize: 14,
     fontWeight: '500',
-    color: '#374151',
+    color: colors.textSecondary,
   },
   settingsGroup: {
     marginBottom: 24,
@@ -181,14 +192,14 @@ const styles = StyleSheet.create({
   groupTitle: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#374151',
+    color: colors.textSecondary,
     marginBottom: 12,
     marginLeft: 4,
   },
   groupContainer: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.surface,
     borderRadius: 12,
-    shadowColor: '#000',
+    shadowColor: colors.shadow,
     shadowOpacity: 0.05,
     shadowOffset: { width: 0, height: 2 },
     shadowRadius: 8,
@@ -200,7 +211,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#F3F4F6',
+    borderBottomColor: colors.borderLight,
   },
   lastItem: {
     borderBottomWidth: 0,
@@ -219,7 +230,7 @@ const styles = StyleSheet.create({
   },
   settingLabel: {
     fontSize: 16,
-    color: '#111827',
+    color: colors.text,
     flex: 1,
   },
   footer: {
@@ -228,11 +239,11 @@ const styles = StyleSheet.create({
   },
   version: {
     fontSize: 14,
-    color: '#9CA3AF',
+    color: colors.textMuted,
     marginBottom: 4,
   },
   copyright: {
     fontSize: 12,
-    color: '#9CA3AF',
+    color: colors.textMuted,
   },
 });

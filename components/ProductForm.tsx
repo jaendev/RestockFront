@@ -23,6 +23,7 @@ import {
 } from "lucide-react-native";
 import { CreateProductDto, Product, UpdateProductDto } from "@/types/product";
 import { useUnitTypes } from "@/hooks/useUnitTypes";
+import { useThemeColors } from "@/context/ThemeContext";
 
 interface ProductFormProps {
   visible: boolean;
@@ -41,6 +42,7 @@ export function ProductForm({
   onSubmit,
   onUpdate,
 }: ProductFormProps) {
+  const colors = useThemeColors();
   const { categories } = useCategories();
   const { unitTypes } = useUnitTypes();
 
@@ -228,6 +230,8 @@ export function ProductForm({
     }
   };
 
+  const styles = createStyles(colors);
+
   return (
     <Modal
       visible={visible}
@@ -242,7 +246,7 @@ export function ProductForm({
         {/* Header */}
         <View style={styles.header}>
           <TouchableOpacity onPress={onClose} style={styles.closeButton}>
-            <X size={24} color="#374151" />
+            <X size={24} color={colors.text} />
           </TouchableOpacity>
           <Text style={styles.headerTitle}>
             {isEditMode ? "Editar Producto" : "Nuevo Producto"}
@@ -499,9 +503,9 @@ export function ProductForm({
               <Switch
                 value={formData.isActive || false}
                 onValueChange={handleToggleIsActive}
-                trackColor={{ false: "#E5E7EB", true: "#DBEAFE" }}
-                thumbColor={formData.isActive ? "#2563EB" : "#FFFFFF"}
-                ios_backgroundColor="#E5E7EB"
+                trackColor={{ false: colors.border, true: colors.primaryLight }}
+                thumbColor={formData.isActive ? colors.primary : colors.surface}
+                ios_backgroundColor={colors.border}
               />
             </View>
           </View>
@@ -628,10 +632,11 @@ export function ProductForm({
   );
 }
 
-const styles = StyleSheet.create({
+// Dynamic styles based on theme colors
+const createStyles = (colors: any) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F9FAFB",
+    backgroundColor: colors.background,
   },
   header: {
     flexDirection: "row",
@@ -640,19 +645,19 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingTop: 60,
     paddingBottom: 16,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.surface,
     borderBottomWidth: 1,
-    borderBottomColor: "#E5E7EB",
+    borderBottomColor: colors.border,
   },
   closeButton: {
     padding: 8,
     borderRadius: 8,
-    backgroundColor: "#F3F4F6",
+    backgroundColor: colors.borderLight,
   },
   headerTitle: {
     fontSize: 18,
     fontWeight: "600",
-    color: "#111827",
+    color: colors.text,
   },
   placeholder: {
     width: 40,
@@ -669,14 +674,14 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: "#DBEAFE",
+    backgroundColor: colors.primaryLight,
     justifyContent: "center",
     alignItems: "center",
     marginBottom: 12,
   },
   iconText: {
     fontSize: 14,
-    color: "#6B7280",
+    color: colors.textSecondary,
     fontWeight: "500",
   },
   section: {
@@ -685,7 +690,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: "600",
-    color: "#111827",
+    color: colors.text,
     marginBottom: 16,
   },
   fieldContainer: {
@@ -694,25 +699,25 @@ const styles = StyleSheet.create({
   fieldLabel: {
     fontSize: 14,
     fontWeight: "500",
-    color: "#374151",
+    color: colors.textSecondary,
     marginBottom: 8,
   },
   required: {
-    color: "#EF4444",
+    color: colors.error,
   },
   input: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.inputBackground,
     borderRadius: 12,
     paddingHorizontal: 16,
     paddingVertical: 12,
     fontSize: 16,
-    color: "#111827",
+    color: colors.text,
     borderWidth: 1,
-    borderColor: "#E5E7EB",
+    borderColor: colors.inputBorder,
   },
   inputError: {
-    borderColor: "#EF4444",
-    backgroundColor: "#FEF2F2",
+    borderColor: colors.error,
+    backgroundColor: colors.errorLight,
   },
   textArea: {
     height: 80,
@@ -735,7 +740,7 @@ const styles = StyleSheet.create({
     left: 16,
     top: 14,
     fontSize: 16,
-    color: "#6B7280",
+    color: colors.textSecondary,
     fontWeight: "600",
     zIndex: 1,
   },
@@ -743,10 +748,10 @@ const styles = StyleSheet.create({
     paddingLeft: 36,
   },
   dropdownContainer: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.inputBackground,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: "#E5E7EB",
+    borderColor: colors.inputBorder,
     padding: 16,
   },
   dropdownButton: {
@@ -759,7 +764,7 @@ const styles = StyleSheet.create({
   },
   dropdownText: {
     fontSize: 16,
-    color: "#374151",
+    color: colors.textSecondary,
     fontWeight: "500",
   },
   categoriesGrid: {
@@ -772,12 +777,12 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     borderRadius: 20,
     borderWidth: 2,
-    borderColor: "#E5E7EB",
-    backgroundColor: "#FFFFFF",
+    borderColor: colors.border,
+    backgroundColor: colors.surface,
     marginRight: 8,
   },
   categoryChipSelected: {
-    backgroundColor: "#F0F9FF",
+    backgroundColor: colors.primaryLight,
   },
   categoryDot: {
     width: 8,
@@ -787,11 +792,11 @@ const styles = StyleSheet.create({
   },
   categoryChipText: {
     fontSize: 14,
-    color: "#374151",
+    color: colors.textSecondary,
     fontWeight: "500",
   },
   categoryChipTextSelected: {
-    color: "#2563EB",
+    color: colors.primary,
     fontWeight: "600",
   },
   unitsGrid: {
@@ -805,31 +810,31 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: "#E5E7EB",
-    backgroundColor: "#FFFFFF",
+    borderColor: colors.border,
+    backgroundColor: colors.surface,
     minWidth: 70,
   },
   unitChipSelected: {
-    borderColor: "#2563EB",
-    backgroundColor: "#F0F9FF",
+    borderColor: colors.primary,
+    backgroundColor: colors.primaryLight,
   },
   unitSymbol: {
     fontSize: 16,
     fontWeight: "700",
-    color: "#374151",
+    color: colors.textSecondary,
     marginBottom: 2,
   },
   unitSymbolSelected: {
-    color: "#2563EB",
+    color: colors.primary,
   },
   unitName: {
     fontSize: 11,
-    color: "#6B7280",
+    color: colors.textSecondary,
     fontWeight: "500",
     textAlign: "center",
   },
   unitNameSelected: {
-    color: "#2563EB",
+    color: colors.primary,
   },
   rowContainer: {
     flexDirection: "row",
@@ -839,25 +844,25 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   stockInfo: {
-    backgroundColor: "#F0F9FF",
+    backgroundColor: colors.primaryLight,
     borderRadius: 8,
     padding: 12,
     marginTop: 8,
   },
   stockInfoText: {
     fontSize: 13,
-    color: "#1E40AF",
+    color: colors.primaryDark,
     lineHeight: 18,
   },
   toggleContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.surface,
     borderRadius: 12,
     padding: 16,
     borderWidth: 1,
-    borderColor: "#E5E7EB",
+    borderColor: colors.border,
   },
   toggleInfo: {
     flex: 1,
@@ -866,23 +871,23 @@ const styles = StyleSheet.create({
   toggleLabel: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#111827",
+    color: colors.text,
     marginBottom: 4,
   },
   toggleDescription: {
     fontSize: 14,
-    color: "#6B7280",
+    color: colors.textSecondary,
     lineHeight: 20,
   },
   previewSection: {
     marginBottom: 32,
   },
   previewCard: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.surface,
     borderRadius: 12,
     padding: 16,
     borderWidth: 1,
-    borderColor: "#E5E7EB",
+    borderColor: colors.border,
   },
   previewHeader: {
     flexDirection: "row",
@@ -893,7 +898,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: "#DBEAFE",
+    backgroundColor: colors.primaryLight,
     justifyContent: "center",
     alignItems: "center",
     marginRight: 12,
@@ -904,12 +909,12 @@ const styles = StyleSheet.create({
   previewName: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#111827",
+    color: colors.text,
     marginBottom: 2,
   },
   previewCategory: {
     fontSize: 12,
-    color: "#6B7280",
+    color: colors.textSecondary,
   },
   previewPrice: {
     alignItems: "flex-end",
@@ -917,47 +922,47 @@ const styles = StyleSheet.create({
   previewPriceText: {
     fontSize: 16,
     fontWeight: "700",
-    color: "#111827",
+    color: colors.text,
   },
   previewDetails: {
     flexDirection: "row",
     justifyContent: "space-around",
     paddingTop: 12,
     borderTopWidth: 1,
-    borderTopColor: "#F3F4F6",
+    borderTopColor: colors.borderLight,
   },
   previewDetailItem: {
     alignItems: "center",
   },
   previewDetailLabel: {
     fontSize: 12,
-    color: "#6B7280",
+    color: colors.textSecondary,
     marginBottom: 4,
   },
   previewDetailValue: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#111827",
+    color: colors.text,
   },
   errorText: {
     fontSize: 12,
-    color: "#EF4444",
+    color: colors.error,
     marginTop: 4,
   },
   footer: {
     flexDirection: "row",
     paddingHorizontal: 20,
     paddingVertical: 16,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.surface,
     borderTopWidth: 1,
-    borderTopColor: "#E5E7EB",
+    borderTopColor: colors.border,
     gap: 12,
   },
   cancelButton: {
     flex: 1,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: "#E5E7EB",
+    borderColor: colors.border,
     paddingVertical: 16,
     borderRadius: 12,
     alignItems: "center",
@@ -965,21 +970,21 @@ const styles = StyleSheet.create({
   cancelButtonText: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#374151",
+    color: colors.textSecondary,
   },
   submitButton: {
     flex: 1,
-    backgroundColor: "#2563EB",
+    backgroundColor: colors.primary,
     paddingVertical: 16,
     borderRadius: 12,
     alignItems: "center",
   },
   submitButtonDisabled: {
-    backgroundColor: "#9CA3AF",
+    backgroundColor: colors.textMuted,
   },
   submitButtonText: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#FFFFFF",
+    color: colors.surface,
   },
 });
